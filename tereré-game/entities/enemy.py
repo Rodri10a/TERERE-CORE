@@ -23,3 +23,12 @@ class Enemy(Character):
         self.target_y: float = 0.0
         self.is_attacking: bool = False
         self.attack_active_frames: int = 0
+
+    def _do_patrol(self) -> None:
+        """Patrulla de un lado a otro."""
+        self.vel_x = self.patrol_direction * self.speed * 0.5
+        self.direction = self.patrol_direction
+        self.ai_timer += 1
+        if self.ai_timer > 120:
+            self.patrol_direction *= -1
+            self.ai_timer = 0
