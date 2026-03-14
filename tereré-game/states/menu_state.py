@@ -59,3 +59,72 @@ class MenuState:
                 self.show_scores = True
             elif self.btn_quit.is_clicked(mouse_pos, True):
                 self.state_manager.should_quit = True
+
+    def update(self, dt: float) -> None:
+        """Actualiza animaciones del menú."""
+        self.animation_timer += 1
+
+    def draw(self) -> None:
+        """Dibuja el menú principal."""
+        self.screen.fill((30, 60, 30))
+
+        # Fondo decorativo
+        for i in range(0, SCREEN_WIDTH, 40):
+            offset = (self.animation_timer + i) % 600
+            alpha_y = offset - 100
+            pygame.draw.circle(self.screen, (40, 70, 40),
+                               (i + 20, alpha_y % SCREEN_HEIGHT), 3)
+
+        if self.show_scores:
+            self._draw_scores()
+            return
+
+        # Título
+        bounce = abs((self.animation_timer % 60) - 30) / 30.0 * 5
+        self.text.render_centered(self.screen, "TERERE QUEST",
+                                  int(80 + bounce), 52, YELLOW)
+        self.text.render_centered(self.screen, "TERERE QUEST",
+                                  int(82 + bounce), 50, TERERE_GREEN)
+
+        # Subtítulo
+        self.text.render_centered(self.screen, "La venganza del capiateno",
+                                  150, 22, WHITE)
+
+        # Historia
+        story_lines = [
+            "Un cheto de Asuncion robo el terere",
+            "de unos capiatenos en la plaza...",
+            "",
+            "Recupera tu terere enfrentando al cheto",
+            "en peleas epicas y minijuegos!",
+        ]
+        y = 200
+        for line in story_lines:
+            if line:
+                self.text.render_centered(self.screen, line, y, 18, (200, 220, 200))
+            y += 25
+
+        # Botones
+        mouse_pos = pygame.mouse.get_pos()
+        self.btn_play.draw(self.screen, mouse_pos)
+        self.btn_scores.draw(self.screen, mouse_pos)
+        self.btn_quit.draw(self.screen, mouse_pos)
+
+        # Controles
+        self.text.render_centered(self.screen, "Flechas: Mover | ESPACIO: Saltar | Z: Atacar | X: Especial",
+                                  570, 14, GRAY)
+
+    def _draw_scores(self) -> None:
+        """Dibuja la pantalla de highscores."""
+        self.text.render_centered(self.screen, "HIGHSCORES", 60, 40, YELLOW)
+
+        if not self.highscores:
+            self.text.render_centered(self.screen, "No hay puntajes aun", 200, 24, GRAY)
+        else:
+            for i, entry in enumerate(self.highscores[:5]):
+                name = entry.get("name", "???")
+                score = entry.get("score", 0)
+                text = f"{i + 1}. {name} - {score}"
+                self.text.render_centered(self.screen, text, 150 + i * 40, 24, WHITE)
+
+        self.text.render_centered(self.screen, "Click para volver", 500, 20, GRAY)
