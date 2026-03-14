@@ -39,3 +39,12 @@ class InputHandler:
         current = self._current_keys.get(key, False)
         previous = self._previous_keys.get(key, False)
         return current and not previous
+
+    def was_just_released(self, action: str) -> bool:
+        """Retorna True solo en el frame en que la tecla se soltó."""
+        key = ACTION_MAP.get(action)
+        if key is None:
+            return False
+        current = self._current_keys.get(key, False)
+        previous = self._previous_keys.get(key, False)
+        return not current and previous
