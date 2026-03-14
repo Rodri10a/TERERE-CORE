@@ -53,3 +53,12 @@ class ScoreSystem:
             pass
 
         return True
+
+    def load_highscores(self) -> list[dict]:
+        """Carga los highscores desde archivo."""
+        try:
+            with open(self.HIGHSCORE_FILE, "r") as f:
+                data = json.load(f)
+                return data.get("highscores", [])
+        except (FileNotFoundError, json.JSONDecodeError, Exception):
+            return []
