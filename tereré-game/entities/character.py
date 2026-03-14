@@ -90,3 +90,31 @@ class Character:
             self.hurt_timer -= 1
 
         self.animation_timer += 1
+
+    def draw(self, screen: pygame.Surface) -> None:
+        """Dibuja el personaje como rectángulo de color con detalles."""
+        color = self.color
+        if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
+            color = (255, 255, 255)
+
+        # Cuerpo
+        pygame.draw.rect(screen, color, self.get_rect())
+
+        # Ojos
+        eye_y = int(self.y + 15)
+        if self.direction == 1:
+            eye_x = int(self.x + self.width - 15)
+        else:
+            eye_x = int(self.x + 8)
+        pygame.draw.circle(screen, (255, 255, 255), (eye_x, eye_y), 5)
+        pygame.draw.circle(screen, (0, 0, 0), (eye_x + self.direction * 2, eye_y), 2)
+
+        # Barra de vida sobre el personaje
+        bar_width = self.width
+        bar_height = 5
+        bar_x = int(self.x)
+        bar_y = int(self.y - 10)
+        health_ratio = self.health / self.max_health
+        pygame.draw.rect(screen, (60, 60, 60), (bar_x, bar_y, bar_width, bar_height))
+        bar_color = (50, 200, 50) if health_ratio > 0.5 else (200, 200, 0) if health_ratio > 0.25 else (200, 50, 50)
+        pygame.draw.rect(screen, bar_color, (bar_x, bar_y, int(bar_width * health_ratio), bar_height))
