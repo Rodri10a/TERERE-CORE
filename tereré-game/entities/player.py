@@ -53,3 +53,18 @@ class Player(Character):
         # Ataque especial
         if self.input_handler.was_just_pressed("SPECIAL") and self.special_cooldown <= 0:
             self.special_attack()
+
+    def attack(self) -> None:
+        """Ejecuta un ataque normal con sistema de combo."""
+        self.is_attacking = True
+        self.attack_active_frames = 8
+        self.state = "attacking"
+
+        if self.combo_timer > 0 and self.combo_count < 2:
+            self.combo_count += 1
+            self.attack_cooldown = ATTACK_COOLDOWN // 2
+        else:
+            self.combo_count = 1
+            self.attack_cooldown = ATTACK_COOLDOWN
+
+        self.combo_timer = COMBO_WINDOW
