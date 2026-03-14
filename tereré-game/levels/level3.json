@@ -1,0 +1,14 @@
+{
+  "id": 3,
+  "name": "Boss Final - Mansion del Cheto",
+  "background": "mansion",
+  "enemy": {
+    "speed": 5,
+    "health": 200,
+    "damage": 20
+  },
+  "minigame": "yuyos_quiz",
+  "platforms": [
+    {"x": 0, "y": 550, "width": 800, "height": 50}
+  ]
+}
