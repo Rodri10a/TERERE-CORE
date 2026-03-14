@@ -36,3 +36,8 @@ class Game:
     def update(self, dt: float) -> None:
         """Actualiza el estado actual del juego."""
         self.state_manager.update(dt)
+
+    def draw(self) -> None:
+        """Dibuja el frame actual."""
+        self.state_manager.draw()
+        pygame.display.flip()
