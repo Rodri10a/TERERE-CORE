@@ -33,3 +33,9 @@ class PhysicsSystem:
             character.x = 0
         if character.x + character.width > SCREEN_WIDTH:
             character.x = SCREEN_WIDTH - character.width
+
+    def update(self, character) -> None:
+        """Aplica toda la física a un personaje en un frame."""
+        self.apply_gravity(character)
+        self.apply_movement(character)
+        self.check_ground(character)
