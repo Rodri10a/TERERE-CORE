@@ -83,3 +83,47 @@ class Enemy(Character):
             self.ai_state = "chase"
         else:
             self.ai_state = "patrol"
+
+    def update(self) -> None:
+        """Actualiza al enemigo cada frame."""
+        if self.ai_state == "patrol":
+            self._do_patrol()
+        elif self.ai_state == "chase":
+            self._do_chase()
+        elif self.ai_state == "attack":
+            self._do_attack()
+        elif self.ai_state == "retreat":
+            self._do_retreat()
+
+        if self.attack_active_frames > 0:
+            self.attack_active_frames -= 1
+        else:
+            self.is_attacking = False
+
+        super().update()
+
+    def draw(self, screen: pygame.Surface) -> None:
+        """Dibuja al cheto con detalles visuales."""
+        super().draw(screen)
+
+        # Lentes de sol (accesorio del cheto)
+        glasses_y = int(self.y + 14)
+        glasses_x = int(self.x + 8)
+        pygame.draw.rect(screen, (40, 40, 40),
+                         (glasses_x, glasses_y, self.width - 16, 8))
+        pygame.draw.rect(screen, (20, 20, 80),
+                         (glasses_x + 2, glasses_y + 1, 12, 6))
+        pygame.draw.rect(screen, (20, 20, 80),
+                         (glasses_x + self.width - 30, glasses_y + 1, 12, 6))
+
+        # Cadena de oro
+        chain_y = int(self.y + 30)
+        pygame.draw.arc(screen, (255, 215, 0),
+                        (int(self.x + 10), chain_y, 30, 15), 3.14, 6.28, 2)
+
+        # Indicador de ataque
+        if self.is_attacking:
+            attack_rect = self.get_attack_rect()
+            s = pygame.Surface((attack_rect.width, attack_rect.height), pygame.SRCALPHA)
+            s.fill((255, 100, 100, 100))
+            screen.blit(s, (attack_rect.x, attack_rect.y))
