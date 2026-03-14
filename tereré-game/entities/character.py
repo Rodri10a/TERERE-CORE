@@ -42,3 +42,13 @@ class Character:
         else:
             return pygame.Rect(int(self.x - attack_width), int(self.y + 10),
                                attack_width, self.height - 20)
+
+    def take_damage(self, amount: int, knockback_dir: int = 0) -> None:
+        """Recibe daño y aplica knockback."""
+        if self.hurt_timer > 0:
+            return
+        self.health -= amount
+        self.hurt_timer = 30
+        self.vel_x = knockback_dir * 6
+        if self.health < 0:
+            self.health = 0
