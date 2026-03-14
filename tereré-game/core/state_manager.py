@@ -57,3 +57,8 @@ class StateManager:
         """Actualiza el estado actual."""
         if self.current_state:
             self.current_state.update(dt)
+
+    def draw(self) -> None:
+        """Dibuja el estado actual."""
+        if self.current_state:
+            self.current_state.draw()
