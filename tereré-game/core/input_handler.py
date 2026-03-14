@@ -30,3 +30,12 @@ class InputHandler:
         if key is None:
             return False
         return self._current_keys.get(key, False)
+
+    def was_just_pressed(self, action: str) -> bool:
+        """Retorna True solo en el frame en que la tecla se presionó."""
+        key = ACTION_MAP.get(action)
+        if key is None:
+            return False
+        current = self._current_keys.get(key, False)
+        previous = self._previous_keys.get(key, False)
+        return current and not previous
