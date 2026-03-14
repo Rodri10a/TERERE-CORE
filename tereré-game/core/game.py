@@ -41,3 +41,13 @@ class Game:
         """Dibuja el frame actual."""
         self.state_manager.draw()
         pygame.display.flip()
+
+    def run(self) -> None:
+        """Loop principal del juego."""
+        while self.running:
+            dt = self.clock.tick(FPS) / 1000.0
+            self.handle_events()
+            self.update(dt)
+            self.draw()
+
+        pygame.quit()
