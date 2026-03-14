@@ -41,3 +41,15 @@ class Enemy(Character):
         else:
             self.vel_x = -self.speed
             self.direction = -1
+
+    def _do_attack(self) -> None:
+        """Ataca al jugador."""
+        # Mirar hacia el jugador
+        self.direction = 1 if self.target_x > self.x else -1
+
+        if self.attack_cooldown <= 0 and random.random() < 0.05:
+            self.is_attacking = True
+            self.attack_active_frames = 10
+            self.attack_cooldown = 40
+            # Retroceder después de atacar
+            self.retreat_timer = 30
