@@ -13,3 +13,7 @@ class ScoreSystem:
 
     def __init__(self) -> None:
         self.score: int = 0
+
+    def add_points(self, points: int) -> None:
+        """Suma puntos al puntaje actual."""
+        self.score += points
