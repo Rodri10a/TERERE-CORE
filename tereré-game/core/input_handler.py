@@ -48,3 +48,10 @@ class InputHandler:
         current = self._current_keys.get(key, False)
         previous = self._previous_keys.get(key, False)
         return not current and previous
+
+    def update(self) -> None:
+        """Actualiza el estado de las teclas. Llamar una vez por frame antes de procesar eventos."""
+        self._previous_keys = self._current_keys.copy()
+        keys = pygame.key.get_pressed()
+        for action, key in ACTION_MAP.items():
+            self._current_keys[key] = keys[key]
