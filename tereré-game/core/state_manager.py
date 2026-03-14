@@ -47,3 +47,8 @@ class StateManager:
         """Cambia al estado especificado, pasando datos adicionales."""
         self.shared_data.update(kwargs)
         self.current_state = self._get_state(state_name)
+
+    def handle_events(self, event: pygame.event.Event) -> None:
+        """Pasa eventos al estado actual."""
+        if self.current_state:
+            self.current_state.handle_events(event)
