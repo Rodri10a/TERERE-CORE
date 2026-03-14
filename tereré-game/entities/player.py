@@ -68,3 +68,19 @@ class Player(Character):
             self.attack_cooldown = ATTACK_COOLDOWN
 
         self.combo_timer = COMBO_WINDOW
+
+    def special_attack(self) -> None:
+        """Ejecuta un ataque especial (tereré splash) con más daño y cooldown."""
+        self.is_attacking = True
+        self.attack_active_frames = 12
+        self.state = "attacking"
+        self.special_cooldown = SPECIAL_COOLDOWN
+        self.combo_count = 0
+
+    def get_current_damage(self) -> int:
+        """Retorna el daño del ataque actual."""
+        if self.special_cooldown >= SPECIAL_COOLDOWN - 5:
+            return self.damage * 3  # Especial hace triple daño
+        if self.combo_count >= 2:
+            return int(self.damage * 1.5)  # Segundo golpe de combo
+        return self.damage
