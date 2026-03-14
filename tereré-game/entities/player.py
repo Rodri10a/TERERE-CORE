@@ -84,3 +84,51 @@ class Player(Character):
         if self.combo_count >= 2:
             return int(self.damage * 1.5)  # Segundo golpe de combo
         return self.damage
+
+    def update(self) -> None:
+        """Actualiza al jugador cada frame."""
+        self.handle_input()
+        super().update()
+
+        # Timers de combate
+        if self.combo_timer > 0:
+            self.combo_timer -= 1
+        else:
+            self.combo_count = 0
+
+        if self.special_cooldown > 0:
+            self.special_cooldown -= 1
+
+        if self.attack_active_frames > 0:
+            self.attack_active_frames -= 1
+        else:
+            self.is_attacking = False
+            if self.state == "attacking":
+                self.state = "idle"
+
+        if self.on_ground and self.state == "jumping":
+            self.state = "idle"
+
+    def draw(self, screen: pygame.Surface) -> None:
+        """Dibuja al capiateño con detalles visuales."""
+        super().draw(screen)
+
+        # Gorra (accesorio del capiateño)
+        hat_rect = pygame.Rect(int(self.x - 3), int(self.y - 8), self.width + 6, 10)
+        pygame.draw.rect(screen, (180, 50, 50), hat_rect)
+
+        # Indicador de ataque
+        if self.is_attacking:
+            attack_rect = self.get_attack_rect()
+            s = pygame.Surface((attack_rect.width, attack_rect.height), pygame.SRCALPHA)
+            if self.special_cooldown >= SPECIAL_COOLDOWN - 10:
+                s.fill((100, 200, 255, 120))  # Azul para especial (tereré splash)
+            else:
+                s.fill((255, 255, 100, 100))  # Amarillo para normal
+            screen.blit(s, (attack_rect.x, attack_rect.y))
+
+        # Indicador de especial listo
+        if self.special_cooldown <= 0:
+            indicator_x = int(self.x + self.width // 2)
+            indicator_y = int(self.y - 18)
+            pygame.draw.circle(screen, (100, 200, 255), (indicator_x, indicator_y), 4)
