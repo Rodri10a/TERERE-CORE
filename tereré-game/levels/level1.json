@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "name": "Plaza de Capiata",
+  "background": "plaza",
+  "enemy": {
+    "speed": 3,
+    "health": 100,
+    "damage": 10
+  },
+  "minigame": "terere_rush",
+  "platforms": [
+    {"x": 0, "y": 550, "width": 800, "height": 50}
+  ]
+}
