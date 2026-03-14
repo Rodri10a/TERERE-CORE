@@ -32,3 +32,7 @@ class Game:
 
         if self.state_manager.should_quit:
             self.running = False
+
+    def update(self, dt: float) -> None:
+        """Actualiza el estado actual del juego."""
+        self.state_manager.update(dt)
