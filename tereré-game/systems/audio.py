@@ -14,3 +14,15 @@ class AudioSystem:
         except Exception:
             pass
         self.music_playing: bool = False
+
+    def play_music(self, path: str, loops: int = -1, volume: float = 0.5) -> None:
+        """Reproduce música de fondo. No crashea si el archivo no existe."""
+        if not self.initialized:
+            return
+        try:
+            pygame.mixer.music.load(path)
+            pygame.mixer.music.set_volume(volume)
+            pygame.mixer.music.play(loops)
+            self.music_playing = True
+        except Exception:
+            pass
