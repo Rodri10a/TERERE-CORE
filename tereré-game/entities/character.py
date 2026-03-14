@@ -56,3 +56,37 @@ class Character:
     def is_alive(self) -> bool:
         """Retorna True si el personaje tiene vida."""
         return self.health > 0
+
+    def apply_gravity(self) -> None:
+        """Aplica gravedad al personaje."""
+        if not self.on_ground:
+            self.vel_y += GRAVITY
+        self.y += self.vel_y
+
+        # Verificar suelo
+        if self.y + self.height >= GROUND_Y:
+            self.y = GROUND_Y - self.height
+            self.vel_y = 0
+            self.on_ground = True
+
+    def update(self) -> None:
+        """Actualiza física y timers del personaje."""
+        self.apply_gravity()
+
+        # Aplicar velocidad horizontal con fricción
+        self.x += self.vel_x
+        self.vel_x *= 0.85
+
+        # Limitar a pantalla
+        if self.x < 0:
+            self.x = 0
+        if self.x + self.width > SCREEN_WIDTH:
+            self.x = SCREEN_WIDTH - self.width
+
+        # Timers
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
+        if self.hurt_timer > 0:
+            self.hurt_timer -= 1
+
+        self.animation_timer += 1
