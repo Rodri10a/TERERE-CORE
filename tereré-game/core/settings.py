@@ -29,3 +29,19 @@ GRAVITY: float = 0.8
 JUMP_FORCE: float = -15.0
 PLAYER_SPEED: float = 5.0
 GROUND_Y: int = 500
+
+# Estados del juego
+STATE_MENU: str = "menu"
+STATE_GAME: str = "game"
+STATE_MINIGAME: str = "minigame"
+STATE_GAMEOVER: str = "gameover"
+STATE_VICTORY: str = "victory"
+
+# Combate
+ATTACK_COOLDOWN: int = 20
+SPECIAL_COOLDOWN: int = 60
+COMBO_WINDOW: int = 30
+KNOCKBACK_FORCE: float = 8.0
+
+# Niveles
+MAX_LEVELS: int = 3
