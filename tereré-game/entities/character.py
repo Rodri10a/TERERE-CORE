@@ -52,3 +52,7 @@ class Character:
         self.vel_x = knockback_dir * 6
         if self.health < 0:
             self.health = 0
+
+    def is_alive(self) -> bool:
+        """Retorna True si el personaje tiene vida."""
+        return self.health > 0
