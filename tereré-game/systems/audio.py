@@ -26,3 +26,24 @@ class AudioSystem:
             self.music_playing = True
         except Exception:
             pass
+
+    def stop_music(self) -> None:
+        """Detiene la música de fondo."""
+        if not self.initialized:
+            return
+        try:
+            pygame.mixer.music.stop()
+            self.music_playing = False
+        except Exception:
+            pass
+
+    def play_sfx(self, path: str, volume: float = 0.7) -> None:
+        """Reproduce un efecto de sonido. No crashea si el archivo no existe."""
+        if not self.initialized:
+            return
+        try:
+            sound = pygame.mixer.Sound(path)
+            sound.set_volume(volume)
+            sound.play()
+        except Exception:
+            pass
