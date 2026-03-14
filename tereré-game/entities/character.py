@@ -28,3 +28,17 @@ class Character:
         self.hurt_timer: int = 0
         self.attack_frame: int = 0
         self.animation_timer: int = 0
+
+    def get_rect(self) -> pygame.Rect:
+        """Retorna el rectángulo de colisión del personaje."""
+        return pygame.Rect(int(self.x), int(self.y), self.width, self.height)
+
+    def get_attack_rect(self) -> pygame.Rect:
+        """Retorna el rectángulo de ataque frente al personaje."""
+        attack_width = 40
+        if self.direction == 1:
+            return pygame.Rect(int(self.x + self.width), int(self.y + 10),
+                               attack_width, self.height - 20)
+        else:
+            return pygame.Rect(int(self.x - attack_width), int(self.y + 10),
+                               attack_width, self.height - 20)
