@@ -32,3 +32,12 @@ class Enemy(Character):
         if self.ai_timer > 120:
             self.patrol_direction *= -1
             self.ai_timer = 0
+
+    def _do_chase(self) -> None:
+        """Persigue al jugador."""
+        if self.target_x > self.x:
+            self.vel_x = self.speed
+            self.direction = 1
+        else:
+            self.vel_x = -self.speed
+            self.direction = -1
