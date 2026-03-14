@@ -45,3 +45,25 @@ class GameState:
         self.enemy: Enemy = Enemy(600, GROUND_Y - 70)
 
         self.load_level(self.current_level)
+
+    def load_level(self, level_number: int) -> None:
+        """Carga la configuración del nivel desde JSON."""
+        self.level_data = self.level_loader.load_level(level_number)
+        self.level_name = self.level_data.get("name", f"Nivel {level_number}")
+        self.minigame_id = self.level_data.get("minigame", "terere_rush")
+
+        enemy_config = self.level_data.get("enemy", {})
+        enemy_speed = enemy_config.get("speed", 3)
+        enemy_health = enemy_config.get("health", 100)
+        enemy_damage = enemy_config.get("damage", 10)
+
+        self.enemy = Enemy(600, GROUND_Y - 70, speed=enemy_speed,
+                           health=enemy_health, damage=enemy_damage)
+
+        # Restaurar vida del jugador
+        player_health = self.state_manager.shared_data.get("player_health", 100)
+        self.player = Player(100, GROUND_Y - 70, self.input_handler)
+        self.player.health = player_health
+
+        self.show_level_intro = True
+        self.intro_timer = 180
