@@ -53,3 +53,33 @@ class Enemy(Character):
             self.attack_cooldown = 40
             # Retroceder después de atacar
             self.retreat_timer = 30
+
+    def _do_retreat(self) -> None:
+        """Se aleja del jugador tras atacar."""
+        if self.target_x > self.x:
+            self.vel_x = -self.speed * 0.7
+        else:
+            self.vel_x = self.speed * 0.7
+
+    def update_ai(self, player_x: float, player_y: float) -> None:
+        """Actualiza la IA del enemigo basándose en la posición del jugador."""
+        self.target_x = player_x
+        self.target_y = player_y
+        distance = abs(self.x - player_x)
+
+        if self.hurt_timer > 0:
+            self.ai_state = "hurt"
+            return
+
+        if self.retreat_timer > 0:
+            self.retreat_timer -= 1
+            self.ai_state = "retreat"
+            return
+
+        # Decidir estado
+        if distance < self.attack_range:
+            self.ai_state = "attack"
+        elif distance < self.chase_range:
+            self.ai_state = "chase"
+        else:
+            self.ai_state = "patrol"
