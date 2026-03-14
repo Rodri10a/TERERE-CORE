@@ -52,3 +52,8 @@ class StateManager:
         """Pasa eventos al estado actual."""
         if self.current_state:
             self.current_state.handle_events(event)
+
+    def update(self, dt: float) -> None:
+        """Actualiza el estado actual."""
+        if self.current_state:
+            self.current_state.update(dt)
