@@ -23,3 +23,27 @@ class StateManager:
         }
         self.should_quit: bool = False
         self._states: dict[str, Any] = {}
+
+    def _get_state(self, state_name: str) -> Any:
+        """Obtiene o crea la instancia del estado solicitado."""
+        if state_name == "menu":
+            from states.menu_state import MenuState
+            return MenuState(self.screen, self, self.input_handler)
+        elif state_name == "game":
+            from states.game_state import GameState
+            return GameState(self.screen, self, self.input_handler)
+        elif state_name == "minigame":
+            from states.minigame_state import MinigameState
+            return MinigameState(self.screen, self, self.input_handler)
+        elif state_name == "gameover":
+            from states.gameover_state import GameOverState
+            return GameOverState(self.screen, self, self.input_handler)
+        elif state_name == "victory":
+            from states.victory_state import VictoryState
+            return VictoryState(self.screen, self, self.input_handler)
+        return None
+
+    def change_state(self, state_name: str, **kwargs: Any) -> None:
+        """Cambia al estado especificado, pasando datos adicionales."""
+        self.shared_data.update(kwargs)
+        self.current_state = self._get_state(state_name)
