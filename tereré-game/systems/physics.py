@@ -9,3 +9,8 @@ class PhysicsSystem:
     def __init__(self, gravity: float = GRAVITY, ground_y: int = GROUND_Y) -> None:
         self.gravity = gravity
         self.ground_y = ground_y
+
+    def apply_gravity(self, character) -> None:
+        """Aplica gravedad al personaje."""
+        if not character.on_ground:
+            character.vel_y += self.gravity
