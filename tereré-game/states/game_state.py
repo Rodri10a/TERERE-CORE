@@ -125,3 +125,64 @@ class GameState:
         """El jugador perdió."""
         self.state_manager.shared_data["score"] = self.score_system.score
         self.state_manager.change_state(STATE_GAMEOVER)
+
+    def draw(self) -> None:
+        """Dibuja el nivel de pelea."""
+        bg_color = self._get_bg_color()
+        self.screen.fill(bg_color)
+
+        # Suelo
+        ground_rect = pygame.Rect(0, GROUND_Y, SCREEN_WIDTH, SCREEN_HEIGHT - GROUND_Y)
+        pygame.draw.rect(self.screen, BROWN, ground_rect)
+        pygame.draw.line(self.screen, DARK_GREEN, (0, GROUND_Y), (SCREEN_WIDTH, GROUND_Y), 3)
+
+        # Decoración de fondo
+        self._draw_background_decor()
+
+        if self.show_level_intro:
+            self._draw_level_intro()
+            return
+
+        # Entidades
+        self.player.draw(self.screen)
+        self.enemy.draw(self.screen)
+
+        # HUD
+        self.hud.draw(self.screen, self.player, self.enemy,
+                      self.score_system.score, self.current_level)
+
+    def _get_bg_color(self) -> tuple:
+        """Color de fondo según nivel."""
+        colors = {
+            1: (135, 200, 235),
+            2: (100, 120, 150),
+            3: (60, 30, 50),
+        }
+        return colors.get(self.current_level, SKY_BLUE)
+
+    def _draw_background_decor(self) -> None:
+        """Dibuja decoración de fondo según el nivel."""
+        if self.current_level == 1:
+            for x in [100, 350, 650]:
+                pygame.draw.rect(self.screen, (100, 70, 40), (x, GROUND_Y - 80, 20, 80))
+                pygame.draw.circle(self.screen, DARK_GREEN, (x + 10, GROUND_Y - 100), 40)
+        elif self.current_level == 2:
+            for x in [50, 250, 500, 700]:
+                h = 150 + (x % 100)
+                pygame.draw.rect(self.screen, (80, 80, 100), (x, GROUND_Y - h, 60, h))
+                for wy in range(GROUND_Y - h + 15, GROUND_Y - 10, 25):
+                    pygame.draw.rect(self.screen, (200, 200, 100), (x + 10, wy, 15, 15))
+                    pygame.draw.rect(self.screen, (200, 200, 100), (x + 35, wy, 15, 15))
+        elif self.current_level == 3:
+            pygame.draw.circle(self.screen, (220, 100, 50), (SCREEN_WIDTH // 2, 100), 60)
+            pygame.draw.circle(self.screen, (240, 150, 80), (SCREEN_WIDTH // 2, 100), 45)
+
+    def _draw_level_intro(self) -> None:
+        """Dibuja la intro del nivel."""
+        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 150))
+        self.screen.blit(overlay, (0, 0))
+
+        self.text.render_centered(self.screen, f"NIVEL {self.current_level}", 200, 48, WHITE)
+        self.text.render_centered(self.screen, self.level_name, 270, 28, TERERE_GREEN)
+        self.text.render_centered(self.screen, "Preparate para la pelea!", 340, 20, (200, 200, 200))
