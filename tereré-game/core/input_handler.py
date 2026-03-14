@@ -23,3 +23,10 @@ class InputHandler:
     def __init__(self) -> None:
         self._current_keys: dict[int, bool] = {}
         self._previous_keys: dict[int, bool] = {}
+
+    def is_pressed(self, action: str) -> bool:
+        """Retorna True si la tecla de la acción está presionada."""
+        key = ACTION_MAP.get(action)
+        if key is None:
+            return False
+        return self._current_keys.get(key, False)
