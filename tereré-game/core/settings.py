@@ -23,3 +23,9 @@ DARK_GRAY = (60, 60, 60)
 BROWN = (139, 90, 43)
 SKY_BLUE = (135, 200, 235)
 TERERE_GREEN = (100, 180, 80)
+
+# Física
+GRAVITY: float = 0.8
+JUMP_FORCE: float = -15.0
+PLAYER_SPEED: float = 5.0
+GROUND_Y: int = 500
