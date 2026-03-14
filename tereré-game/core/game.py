@@ -20,3 +20,15 @@ class Game:
         self.input_handler = InputHandler()
         self.state_manager = StateManager(self.screen, self.input_handler)
         self.state_manager.change_state(STATE_MENU)
+
+    def handle_events(self) -> None:
+        """Procesa eventos de pygame."""
+        self.input_handler.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+                return
+            self.state_manager.handle_events(event)
+
+        if self.state_manager.should_quit:
+            self.running = False
