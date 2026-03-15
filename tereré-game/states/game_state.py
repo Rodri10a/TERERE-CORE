@@ -1,5 +1,6 @@
 """Estado principal de pelea 2D."""
 
+import os
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_MINIGAME,
                            STATE_GAMEOVER, STATE_VICTORY, STATE_MENU, MAX_LEVELS,
@@ -37,6 +38,7 @@ class GameState:
         self.level_name: str = ""
         self.minigame_id: str = ""
         self.platforms: list = []
+        self.bg_image: pygame.Surface | None = None
 
         # Pausa
         self.paused: bool = False
@@ -73,6 +75,17 @@ class GameState:
         player_health = self.state_manager.shared_data.get("player_health", 100)
         self.player = Player(100, GROUND_Y - 70, self.input_handler)
         self.player.health = player_health
+
+        # Cargar imagen de fondo del nivel
+        self.bg_image = None
+        bg_file = self.level_data.get("bg_image", "")
+        if bg_file:
+            bg_path = os.path.join(os.path.dirname(__file__), "..",
+                                   "assets", "images", "backgrounds", bg_file)
+            if os.path.exists(bg_path):
+                self.bg_image = pygame.image.load(bg_path).convert()
+                self.bg_image = pygame.transform.scale(
+                    self.bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         self.show_level_intro = True
         self.intro_timer = 180
@@ -164,16 +177,19 @@ class GameState:
 
     def draw(self) -> None:
         """Dibuja el nivel de pelea."""
-        bg_color = self._get_bg_color()
-        self.screen.fill(bg_color)
+        if self.bg_image:
+            self.screen.blit(self.bg_image, (0, 0))
+        else:
+            bg_color = self._get_bg_color()
+            self.screen.fill(bg_color)
 
-        # Suelo
-        ground_rect = pygame.Rect(0, GROUND_Y, SCREEN_WIDTH, SCREEN_HEIGHT - GROUND_Y)
-        pygame.draw.rect(self.screen, BROWN, ground_rect)
-        pygame.draw.line(self.screen, DARK_GREEN, (0, GROUND_Y), (SCREEN_WIDTH, GROUND_Y), 3)
+            # Suelo
+            ground_rect = pygame.Rect(0, GROUND_Y, SCREEN_WIDTH, SCREEN_HEIGHT - GROUND_Y)
+            pygame.draw.rect(self.screen, BROWN, ground_rect)
+            pygame.draw.line(self.screen, DARK_GREEN, (0, GROUND_Y), (SCREEN_WIDTH, GROUND_Y), 3)
 
-        # Decoración de fondo
-        self._draw_background_decor()
+            # Decoración de fondo
+            self._draw_background_decor()
 
         # Plataformas elevadas
         self._draw_platforms()
