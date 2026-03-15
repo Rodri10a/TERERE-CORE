@@ -2,7 +2,7 @@
 
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
-                           TERERE_GREEN, STATE_GAME, YELLOW, DARK_GREEN, GRAY)
+                           TERERE_GREEN, STATE_NAME, YELLOW, DARK_GREEN, GRAY)
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from ui.button import Button
@@ -54,7 +54,7 @@ class MenuState:
                 self.state_manager.shared_data["score"] = 0
                 self.state_manager.shared_data["current_level"] = 1
                 self.state_manager.shared_data["player_health"] = 100
-                self.state_manager.change_state(STATE_GAME)
+                self.state_manager.change_state(STATE_NAME)
             elif self.btn_scores.is_clicked(mouse_pos, True):
                 self.show_scores = True
             elif self.btn_quit.is_clicked(mouse_pos, True):
@@ -81,9 +81,9 @@ class MenuState:
 
         # Título
         bounce = abs((self.animation_timer % 60) - 30) / 30.0 * 5
-        self.text.render_centered(self.screen, "TERERE QUEST",
+        self.text.render_centered(self.screen, "TERERE CORE",
                                   int(80 + bounce), 52, YELLOW)
-        self.text.render_centered(self.screen, "TERERE QUEST",
+        self.text.render_centered(self.screen, "TERERE CORE",
                                   int(82 + bounce), 50, TERERE_GREEN)
 
         # Subtítulo
@@ -111,7 +111,7 @@ class MenuState:
         self.btn_quit.draw(self.screen, mouse_pos)
 
         # Controles
-        self.text.render_centered(self.screen, "Flechas: Mover | ESPACIO: Saltar | Z: Atacar | X: Especial",
+        self.text.render_centered(self.screen, "Flechas/A D: Mover | ESPACIO/W: Saltar | ENTER: Atacar | J: Especial",
                                   570, 14, GRAY)
 
     def _draw_scores(self) -> None:

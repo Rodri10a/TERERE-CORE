@@ -1,4 +1,4 @@
-"""Motor principal del juego Tereré Quest."""
+"""Motor principal del juego Terere Core."""
 
 import pygame
 from core.settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE, STATE_MENU

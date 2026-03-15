@@ -1,12 +1,12 @@
-"""Constantes y configuración global del juego Tereré Quest."""
+"""Constantes y configuración global del juego Terere Core."""
 
 import pygame
 
 # Pantalla
-SCREEN_WIDTH: int = 800
-SCREEN_HEIGHT: int = 600
+SCREEN_WIDTH: int = 1280
+SCREEN_HEIGHT: int = 720
 FPS: int = 60
-TITLE: str = "Tereré Quest"
+TITLE: str = "Terere Core"
 
 # Colores
 WHITE = (255, 255, 255)
@@ -28,10 +28,13 @@ TERERE_GREEN = (100, 180, 80)
 GRAVITY: float = 0.8
 JUMP_FORCE: float = -15.0
 PLAYER_SPEED: float = 5.0
-GROUND_Y: int = 500
+GROUND_Y: int = 600
 
 # Estados del juego
 STATE_MENU: str = "menu"
+STATE_NAME: str = "name"
+STATE_STORY: str = "story"
+STATE_SELECT: str = "select"
 STATE_GAME: str = "game"
 STATE_MINIGAME: str = "minigame"
 STATE_GAMEOVER: str = "gameover"

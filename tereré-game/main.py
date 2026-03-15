@@ -1,5 +1,5 @@
 """
-Tereré Quest - Punto de entrada del juego.
+Terere Core - Punto de entrada del juego.
 Un juego de pelea 2D con temática paraguaya.
 """
 
