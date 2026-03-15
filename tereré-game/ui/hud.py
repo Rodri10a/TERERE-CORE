@@ -41,7 +41,7 @@ class HUD:
         self.text.render(screen, hp_text, x + width // 2 - 20, bar_y + 2, 16, WHITE)
 
     def draw(self, screen: pygame.Surface, player, enemy,
-             score: int, level: int) -> None:
+             score: int, level: int, player_name: str = "CAPIATENO") -> None:
         """Dibuja el HUD completo."""
         # Fondo semitransparente del HUD
         hud_bg = pygame.Surface((SCREEN_WIDTH, 55), pygame.SRCALPHA)
@@ -50,7 +50,7 @@ class HUD:
 
         # Barra de vida del jugador
         self._draw_health_bar(screen, 10, 10, 200, 20,
-                              player.health, player.max_health, "CAPIATENO")
+                              player.health, player.max_health, player_name.upper())
 
         # Barra de vida del enemigo
         self._draw_health_bar(screen, SCREEN_WIDTH - 210, 10, 200, 20,

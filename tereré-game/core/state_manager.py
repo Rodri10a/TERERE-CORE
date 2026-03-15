@@ -29,6 +29,15 @@ class StateManager:
         if state_name == "menu":
             from states.menu_state import MenuState
             return MenuState(self.screen, self, self.input_handler)
+        elif state_name == "name":
+            from states.name_state import NameState
+            return NameState(self.screen, self, self.input_handler)
+        elif state_name == "story":
+            from states.story_state import StoryState
+            return StoryState(self.screen, self, self.input_handler)
+        elif state_name == "select":
+            from states.select_state import SelectState
+            return SelectState(self.screen, self, self.input_handler)
         elif state_name == "game":
             from states.game_state import GameState
             return GameState(self.screen, self, self.input_handler)
