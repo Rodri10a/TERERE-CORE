@@ -57,8 +57,11 @@ DEFAULT_LEVELS = {
 class LevelLoader:
     """Carga configuración de niveles desde JSON con fallback a datos por defecto."""
 
-    def __init__(self, levels_dir: str = "levels") -> None:
-        self.levels_dir = levels_dir
+    def __init__(self, levels_dir: str = "") -> None:
+        if levels_dir:
+            self.levels_dir = levels_dir
+        else:
+            self.levels_dir = os.path.dirname(os.path.abspath(__file__))
 
     def load_level(self, level_number: int) -> dict:
         """Carga el nivel desde JSON. Si no existe, usa valores por defecto."""
