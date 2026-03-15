@@ -2,6 +2,7 @@
   "id": 3,
   "name": "Boss Final - Mansion del Cheto",
   "background": "mansion",
+  "bg_image": "villarrica.jpg",
   "bg_color": [60, 30, 50],
   "score_bonus": 800,
   "enemy_start_x": 450,
