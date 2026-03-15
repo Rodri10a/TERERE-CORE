@@ -21,6 +21,10 @@ class BaseMinigame(ABC):
         """Retorna los segundos restantes."""
         return max(0, self.timer / 60.0)
 
+    def progress(self) -> float:
+        """Retorna el avance del minijuego de 0.0 (inicio) a 1.0 (fin)."""
+        return max(0.0, 1.0 - self.timer / self.duration)
+
     @abstractmethod
     def update(self) -> None:
         """Actualiza la lógica del minijuego."""

@@ -35,6 +35,7 @@ class GameState:
         self.level_data: dict = {}
         self.level_name: str = ""
         self.minigame_id: str = ""
+        self.platforms: list = []
 
         # Transición
         self.transition_timer: int = 0
@@ -51,13 +52,15 @@ class GameState:
         self.level_data = self.level_loader.load_level(level_number)
         self.level_name = self.level_data.get("name", f"Nivel {level_number}")
         self.minigame_id = self.level_data.get("minigame", "terere_rush")
+        self.platforms = self.level_data.get("platforms", [])
 
         enemy_config = self.level_data.get("enemy", {})
         enemy_speed = enemy_config.get("speed", 3)
         enemy_health = enemy_config.get("health", 100)
         enemy_damage = enemy_config.get("damage", 10)
+        enemy_start_x = self.level_data.get("enemy_start_x", 600)
 
-        self.enemy = Enemy(600, GROUND_Y - 70, speed=enemy_speed,
+        self.enemy = Enemy(enemy_start_x, GROUND_Y - 70, speed=enemy_speed,
                            health=enemy_health, damage=enemy_damage)
 
         # Restaurar vida del jugador
@@ -86,6 +89,14 @@ class GameState:
         self.enemy.update_ai(self.player.x, self.player.y)
         self.enemy.update()
 
+        # Colisiones con plataformas elevadas
+        if self.player.y + self.player.height < GROUND_Y:
+            if not self.collision.check_ground_collision(self.player, self.platforms):
+                self.player.on_ground = False
+        if self.enemy.y + self.enemy.height < GROUND_Y:
+            if not self.collision.check_ground_collision(self.enemy, self.platforms):
+                self.enemy.on_ground = False
+
         # Colisiones de ataque del jugador
         if self.player.is_attacking and self.player.attack_active_frames > 0:
             if self.collision.check_attack_hit(self.player, self.enemy):
@@ -110,7 +121,8 @@ class GameState:
 
     def _on_enemy_defeated(self) -> None:
         """El jugador ganó la pelea del nivel."""
-        self.score_system.add_points(500)
+        score_bonus = self.level_data.get("score_bonus", 500)
+        self.score_system.add_points(score_bonus)
         self.state_manager.shared_data["score"] = self.score_system.score
         self.state_manager.shared_data["player_health"] = self.player.health
 
@@ -139,6 +151,9 @@ class GameState:
         # Decoración de fondo
         self._draw_background_decor()
 
+        # Plataformas elevadas
+        self._draw_platforms()
+
         if self.show_level_intro:
             self._draw_level_intro()
             return
@@ -151,14 +166,13 @@ class GameState:
         self.hud.draw(self.screen, self.player, self.enemy,
                       self.score_system.score, self.current_level)
 
+        # Nombre del nivel (sutil, debajo del HUD)
+        self.text.render_centered(self.screen, self.level_name, 58, 13, (160, 160, 160))
+
     def _get_bg_color(self) -> tuple:
-        """Color de fondo según nivel."""
-        colors = {
-            1: (135, 200, 235),
-            2: (100, 120, 150),
-            3: (60, 30, 50),
-        }
-        return colors.get(self.current_level, SKY_BLUE)
+        """Color de fondo desde el JSON del nivel."""
+        bg = self.level_data.get("bg_color", list(SKY_BLUE))
+        return tuple(bg)
 
     def _draw_background_decor(self) -> None:
         """Dibuja decoración de fondo según el nivel."""
@@ -176,6 +190,27 @@ class GameState:
         elif self.current_level == 3:
             pygame.draw.circle(self.screen, (220, 100, 50), (SCREEN_WIDTH // 2, 100), 60)
             pygame.draw.circle(self.screen, (240, 150, 80), (SCREEN_WIDTH // 2, 100), 45)
+
+    def _draw_platforms(self) -> None:
+        """Dibuja las plataformas elevadas del nivel con colores temáticos."""
+        platform_colors = {
+            1: (100, 70, 40),   # Madera (banco de plaza)
+            2: (70, 70, 90),    # Metal (techo de auto / parada de bus)
+            3: (110, 75, 110),  # Piedra lujosa (mansion)
+        }
+        edge_colors = {
+            1: (60, 40, 20),
+            2: (50, 50, 70),
+            3: (80, 50, 90),
+        }
+        color = platform_colors.get(self.current_level, BROWN)
+        edge = edge_colors.get(self.current_level, DARK_GREEN)
+        for plat in self.platforms:
+            if plat["y"] < GROUND_Y:
+                pygame.draw.rect(self.screen, color,
+                                 (plat["x"], plat["y"], plat["width"], plat["height"]))
+                pygame.draw.rect(self.screen, edge,
+                                 (plat["x"], plat["y"], plat["width"], plat["height"]), 2)
 
     def _draw_level_intro(self) -> None:
         """Dibuja la intro del nivel."""

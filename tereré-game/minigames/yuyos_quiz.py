@@ -91,6 +91,8 @@ class YuyosQuiz(BaseMinigame):
         if self.completed:
             return
 
+        self.timer -= 1
+
         if self.answered:
             self.answer_timer -= 1
             if self.answer_timer <= 0:

@@ -65,11 +65,7 @@ class EsquivaCheto(BaseMinigame):
                            self.player_width, self.player_height)
 
     def handle_events(self, event: pygame.event.Event) -> None:
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and self.player_lane > 0:
-                self.player_lane -= 1
-            elif event.key == pygame.K_DOWN and self.player_lane < 2:
-                self.player_lane += 1
+        pass
 
     def update(self) -> None:
         if self.completed:
@@ -78,6 +74,12 @@ class EsquivaCheto(BaseMinigame):
         self.timer -= 1
         if self.hurt_timer > 0:
             self.hurt_timer -= 1
+
+        # Cambiar de carril con InputHandler (soporta flechas y WASD)
+        if self.input_handler.was_just_pressed("UP") and self.player_lane > 0:
+            self.player_lane -= 1
+        if self.input_handler.was_just_pressed("DOWN") and self.player_lane < 2:
+            self.player_lane += 1
 
         if self.timer <= 0 or self.lives <= 0:
             self.completed = True
@@ -139,5 +141,5 @@ class EsquivaCheto(BaseMinigame):
         self.text.render(self.screen, f"Tiempo: {self.get_time_remaining():.0f}s",
                          SCREEN_WIDTH - 150, 70, 22, WHITE)
 
-        self.text.render_centered(self.screen, "Flechas ARRIBA/ABAJO para cambiar de carril",
+        self.text.render_centered(self.screen, "Flechas / WASD para cambiar de carril",
                                   SCREEN_HEIGHT - 30, 16, GRAY)

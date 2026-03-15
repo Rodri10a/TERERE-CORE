@@ -11,13 +11,14 @@ from ui.text_renderer import TextRenderer
 class FallingGuampa:
     """Una guampa de tereré cayendo."""
 
-    def __init__(self) -> None:
+    def __init__(self, min_speed: float = 3.0) -> None:
         self.x: float = random.randint(30, SCREEN_WIDTH - 60)
         self.y: float = -30
         self.width: int = 30
         self.height: int = 40
-        self.speed: float = random.uniform(3, 6)
+        self.speed: float = random.uniform(min_speed, min_speed + 3)
         self.active: bool = True
+        self.caught: bool = False
 
     def update(self) -> None:
         self.y += self.speed
@@ -51,6 +52,9 @@ class TerereRush(BaseMinigame):
         self.guampas: list[FallingGuampa] = []
         self.spawn_timer: int = 0
         self.caught: int = 0
+        self.missed: int = 0
+        self.streak: int = 0
+        self.best_streak: int = 0
 
     def handle_events(self, event: pygame.event.Event) -> None:
         pass
@@ -62,7 +66,7 @@ class TerereRush(BaseMinigame):
         self.timer -= 1
         if self.timer <= 0:
             self.completed = True
-            self.score_earned = self.caught * 50
+            self.score_earned = self.caught * 50 + self.best_streak * 20
             return
 
         # Mover canasta
@@ -72,10 +76,13 @@ class TerereRush(BaseMinigame):
             self.basket_x += self.basket_speed
         self.basket_x = max(0, min(SCREEN_WIDTH - self.basket_width, self.basket_x))
 
-        # Spawn guampas
+        # Spawn guampas con dificultad progresiva
+        p = self.progress()
+        spawn_rate = max(15, int(45 - p * 30))
+        min_speed = 3.0 + p * 3.0
         self.spawn_timer += 1
-        if self.spawn_timer >= 30:
-            self.guampas.append(FallingGuampa())
+        if self.spawn_timer >= spawn_rate:
+            self.guampas.append(FallingGuampa(min_speed))
             self.spawn_timer = 0
 
         # Actualizar guampas
@@ -85,7 +92,17 @@ class TerereRush(BaseMinigame):
             g.update()
             if g.active and g.get_rect().colliderect(basket_rect):
                 g.active = False
+                g.caught = True
                 self.caught += 1
+                self.streak += 1
+                if self.streak > self.best_streak:
+                    self.best_streak = self.streak
+
+        # Detectar guampas perdidas (cayeron sin ser atrapadas)
+        for g in self.guampas:
+            if not g.active and not g.caught:
+                self.streak = 0
+                self.missed += 1
 
         self.guampas = [g for g in self.guampas if g.active]
 
@@ -94,8 +111,12 @@ class TerereRush(BaseMinigame):
 
         self.text.render_centered(self.screen, "TERERE RUSH!", 20, 30, YELLOW)
         self.text.render(self.screen, f"Atrapadas: {self.caught}", 20, 60, 22, WHITE)
+        self.text.render(self.screen, f"Perdidas: {self.missed}", 20, 85, 18, RED)
         self.text.render(self.screen, f"Tiempo: {self.get_time_remaining():.0f}s",
                          SCREEN_WIDTH - 150, 60, 22, WHITE)
+        if self.streak >= 3:
+            streak_color = YELLOW if self.streak < 6 else (255, 140, 0)
+            self.text.render_centered(self.screen, f"Racha x{self.streak}!", 90, 22, streak_color)
 
         # Guampas
         for g in self.guampas:
@@ -108,5 +129,5 @@ class TerereRush(BaseMinigame):
         pygame.draw.rect(self.screen, (140, 100, 40), basket_rect, 3)
 
         # Instrucciones
-        self.text.render_centered(self.screen, "Flechas para mover la canasta",
+        self.text.render_centered(self.screen, "Flechas / WASD para mover la canasta",
                                   SCREEN_HEIGHT - 30, 16, (150, 180, 150))
