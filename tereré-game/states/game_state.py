@@ -2,9 +2,10 @@
 
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_MINIGAME,
-                           STATE_GAMEOVER, STATE_VICTORY, MAX_LEVELS,
+                           STATE_GAMEOVER, STATE_VICTORY, STATE_MENU, MAX_LEVELS,
                            GROUND_Y, WHITE, BLACK, SKY_BLUE, BROWN,
                            TERERE_GREEN, DARK_GREEN)
+from ui.button import Button
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from entities.player import Player
@@ -36,6 +37,11 @@ class GameState:
         self.level_name: str = ""
         self.minigame_id: str = ""
         self.platforms: list = []
+
+        # Pausa
+        self.paused: bool = False
+        self.show_instructions: bool = False
+        self._setup_pause_buttons()
 
         # Transición
         self.transition_timer: int = 0
@@ -73,7 +79,22 @@ class GameState:
 
     def handle_events(self, event: pygame.event.Event) -> None:
         """Maneja eventos durante la pelea."""
-        pass
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            if self.show_instructions:
+                self.show_instructions = False
+            elif not self.show_level_intro:
+                self.paused = not self.paused
+
+        if self.paused and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_pos = pygame.mouse.get_pos()
+            if self.pause_buttons["reanudar"].is_clicked(mouse_pos, True):
+                self.paused = False
+            elif self.pause_buttons["instrucciones"].is_clicked(mouse_pos, True):
+                self.show_instructions = True
+            elif self.pause_buttons["menu"].is_clicked(mouse_pos, True):
+                self.state_manager.change_state(STATE_MENU)
+            elif self.pause_buttons["salir"].is_clicked(mouse_pos, True):
+                self.state_manager.should_quit = True
 
     def update(self, dt: float) -> None:
         """Actualiza toda la lógica del nivel de pelea."""
@@ -82,6 +103,9 @@ class GameState:
             self.intro_timer -= 1
             if self.intro_timer <= 0:
                 self.show_level_intro = False
+            return
+
+        if self.paused:
             return
 
         # Actualizar entidades
@@ -169,6 +193,9 @@ class GameState:
         # Nombre del nivel (sutil, debajo del HUD)
         self.text.render_centered(self.screen, self.level_name, 58, 13, (160, 160, 160))
 
+        if self.paused:
+            self._draw_pause_menu()
+
     def _get_bg_color(self) -> tuple:
         """Color de fondo desde el JSON del nivel."""
         bg = self.level_data.get("bg_color", list(SKY_BLUE))
@@ -190,6 +217,50 @@ class GameState:
         elif self.current_level == 3:
             pygame.draw.circle(self.screen, (220, 100, 50), (SCREEN_WIDTH // 2, 100), 60)
             pygame.draw.circle(self.screen, (240, 150, 80), (SCREEN_WIDTH // 2, 100), 45)
+
+    def _setup_pause_buttons(self) -> None:
+        """Crea los botones del menú de pausa."""
+        cx = SCREEN_WIDTH // 2 - 110
+        self.pause_buttons = {
+            "reanudar":      Button(cx, 210, 220, 45, "Reanudar",
+                                   bg_color=(40, 100, 40), hover_color=(60, 140, 60)),
+            "instrucciones": Button(cx, 270, 220, 45, "Instrucciones",
+                                   bg_color=(40, 60, 100), hover_color=(60, 90, 140)),
+            "menu":          Button(cx, 330, 220, 45, "Volver al Menu",
+                                   bg_color=(80, 60, 30), hover_color=(120, 90, 45)),
+            "salir":         Button(cx, 390, 220, 45, "Salir",
+                                   bg_color=(100, 30, 30), hover_color=(140, 50, 50)),
+        }
+
+    def _draw_pause_menu(self) -> None:
+        """Dibuja el overlay del menú de pausa."""
+        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 160))
+        self.screen.blit(overlay, (0, 0))
+        self.text.render_centered(self.screen, "PAUSA", 130, 48, WHITE)
+        if self.show_instructions:
+            self._draw_pause_instructions()
+            return
+        mouse_pos = pygame.mouse.get_pos()
+        for btn in self.pause_buttons.values():
+            btn.draw(self.screen, mouse_pos)
+
+    def _draw_pause_instructions(self) -> None:
+        """Dibuja los controles del juego."""
+        self.text.render_centered(self.screen, "CONTROLES", 185, 26, TERERE_GREEN)
+        lines = [
+            ("Mover",            "Flechas  /  A  D"),
+            ("Saltar",           "Espacio  /  W"),
+            ("Ataque normal",    "Z"),
+            ("Ataque especial",  "X"),
+            ("Pausar",           "Escape"),
+        ]
+        y = 230
+        for action, keys in lines:
+            self.text.render(self.screen, action, 200, y, 20, WHITE)
+            self.text.render(self.screen, keys, 440, y, 20, TERERE_GREEN)
+            y += 35
+        self.text.render_centered(self.screen, "Escape para volver", 450, 16, (150, 150, 150))
 
     def _draw_platforms(self) -> None:
         """Dibuja las plataformas elevadas del nivel con colores temáticos."""
