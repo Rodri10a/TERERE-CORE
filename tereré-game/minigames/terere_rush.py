@@ -42,7 +42,7 @@ class TerereRush(BaseMinigame):
     """Atrapa guampas de tereré cayendo con una canasta. Dura 30 segundos."""
 
     def __init__(self, screen: pygame.Surface, input_handler: InputHandler) -> None:
-        super().__init__(screen, input_handler, duration=1800)  # 30 seg
+        super().__init__(screen, input_handler, duration=900)  # 15 seg
         self.text = TextRenderer()
         self.basket_x: float = SCREEN_WIDTH // 2 - 40
         self.basket_y: int = SCREEN_HEIGHT - 80

@@ -34,6 +34,8 @@ class GameState:
         self.text = TextRenderer()
 
         self.current_level: int = state_manager.shared_data.get("current_level", 1)
+        self.player_name: str = state_manager.shared_data.get("player_name", "Capiateno")
+        self.character_file: str = state_manager.shared_data.get("character", "personaje_principal.jpg")
         self.level_data: dict = {}
         self.level_name: str = ""
         self.minigame_id: str = ""
@@ -50,8 +52,8 @@ class GameState:
         self.show_level_intro: bool = True
         self.intro_timer: int = 180  # 3 segundos
 
-        self.player: Player = Player(100, GROUND_Y - 70, input_handler)
-        self.enemy: Enemy = Enemy(600, GROUND_Y - 70)
+        self.player: Player = Player(200, GROUND_Y - 250, input_handler, self.character_file)
+        self.enemy: Enemy = Enemy(900, GROUND_Y - 100)
 
         self.load_level(self.current_level)
 
@@ -68,12 +70,12 @@ class GameState:
         enemy_damage = enemy_config.get("damage", 10)
         enemy_start_x = self.level_data.get("enemy_start_x", 600)
 
-        self.enemy = Enemy(enemy_start_x, GROUND_Y - 70, speed=enemy_speed,
+        self.enemy = Enemy(enemy_start_x, GROUND_Y - 100, speed=enemy_speed,
                            health=enemy_health, damage=enemy_damage)
 
         # Restaurar vida del jugador
         player_health = self.state_manager.shared_data.get("player_health", 100)
-        self.player = Player(100, GROUND_Y - 70, self.input_handler)
+        self.player = Player(200, GROUND_Y - 250, self.input_handler, self.character_file)
         self.player.health = player_health
 
         # Cargar imagen de fondo del nivel
@@ -92,6 +94,14 @@ class GameState:
 
     def handle_events(self, event: pygame.event.Event) -> None:
         """Maneja eventos durante la pelea."""
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+            self._on_enemy_defeated()
+            return
+
+        if self.show_level_intro and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            self.show_level_intro = False
+            return
+
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             if self.show_instructions:
                 self.show_instructions = False
@@ -111,11 +121,8 @@ class GameState:
 
     def update(self, dt: float) -> None:
         """Actualiza toda la lógica del nivel de pelea."""
-        # Intro del nivel
+        # Intro del nivel - espera ENTER
         if self.show_level_intro:
-            self.intro_timer -= 1
-            if self.intro_timer <= 0:
-                self.show_level_intro = False
             return
 
         if self.paused:
@@ -191,8 +198,9 @@ class GameState:
             # Decoración de fondo
             self._draw_background_decor()
 
-        # Plataformas elevadas
-        self._draw_platforms()
+        # Plataformas elevadas (solo sin imagen de fondo)
+        if not self.bg_image:
+            self._draw_platforms()
 
         if self.show_level_intro:
             self._draw_level_intro()
@@ -204,7 +212,7 @@ class GameState:
 
         # HUD
         self.hud.draw(self.screen, self.player, self.enemy,
-                      self.score_system.score, self.current_level)
+                      self.score_system.score, self.current_level, self.player_name)
 
         # Nombre del nivel (sutil, debajo del HUD)
         self.text.render_centered(self.screen, self.level_name, 58, 13, (160, 160, 160))
@@ -267,9 +275,10 @@ class GameState:
         lines = [
             ("Mover",            "Flechas  /  A  D"),
             ("Saltar",           "Espacio  /  W"),
-            ("Ataque normal",    "Z"),
-            ("Ataque especial",  "X"),
+            ("Ataque normal",    "Enter"),
+            ("Ataque especial",  "J"),
             ("Pausar",           "Escape"),
+            ("Saltar nivel",     "P"),
         ]
         y = 230
         for action, keys in lines:
@@ -308,3 +317,4 @@ class GameState:
         self.text.render_centered(self.screen, f"NIVEL {self.current_level}", 200, 48, WHITE)
         self.text.render_centered(self.screen, self.level_name, 270, 28, TERERE_GREEN)
         self.text.render_centered(self.screen, "Preparate para la pelea!", 340, 20, (200, 200, 200))
+        self.text.render_centered(self.screen, "Presiona ENTER para comenzar", 420, 18, (150, 150, 150))

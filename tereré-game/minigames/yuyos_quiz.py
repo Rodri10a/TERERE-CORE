@@ -27,7 +27,7 @@ class YuyosQuiz(BaseMinigame):
     """Quiz de yuyos paraguayos. 3 preguntas, 10 segundos cada una."""
 
     def __init__(self, screen: pygame.Surface, input_handler: InputHandler) -> None:
-        super().__init__(screen, input_handler, duration=1800)
+        super().__init__(screen, input_handler, duration=900)  # 15 seg
         self.text = TextRenderer()
         self.questions: list[dict] = []
         self.current_question: int = 0

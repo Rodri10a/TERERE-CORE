@@ -45,7 +45,7 @@ class EsquivaCheto(BaseMinigame):
     """Esquiva objetos del cheto moviéndote entre 3 carriles. 3 vidas."""
 
     def __init__(self, screen: pygame.Surface, input_handler: InputHandler) -> None:
-        super().__init__(screen, input_handler, duration=2400)  # 40 seg
+        super().__init__(screen, input_handler, duration=900)  # 15 seg
         self.text = TextRenderer()
         self.player_lane: int = 1  # 0, 1, 2
         self.player_x: int = 100
@@ -55,7 +55,7 @@ class EsquivaCheto(BaseMinigame):
         self.objects: list[ChetoObject] = []
         self.spawn_timer: int = 0
         self.dodged: int = 0
-        self.hurt_timer: int = 0
+        self.hurt_timer: int = 0 
 
     def _get_player_y(self) -> int:
         return 185 + self.player_lane * 120
