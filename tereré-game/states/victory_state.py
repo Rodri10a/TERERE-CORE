@@ -3,7 +3,7 @@
 import math
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_MENU,
-                           WHITE, YELLOW, TERERE_GREEN, GRAY)
+                        WHITE, YELLOW, TERERE_GREEN, GRAY)
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from systems.score import ScoreSystem
@@ -15,7 +15,7 @@ class VictoryState:
     """Pantalla de victoria con mensaje, puntaje, estrellas y opciones."""
 
     def __init__(self, screen: pygame.Surface, state_manager: StateManager,
-                 input_handler: InputHandler) -> None:
+                input_handler: InputHandler) -> None:
         self.screen = screen
         self.state_manager = state_manager
         self.input_handler = input_handler
@@ -36,7 +36,7 @@ class VictoryState:
 
         btn_x = SCREEN_WIDTH // 2 - 100
         self.btn_menu = Button(btn_x, 450, 200, 50, "MENU PRINCIPAL",
-                               bg_color=TERERE_GREEN, hover_color=(130, 210, 110))
+                            bg_color=TERERE_GREEN, hover_color=(130, 210, 110))
 
         self.animation_timer: int = 0
 
@@ -65,10 +65,10 @@ class VictoryState:
             pygame.draw.circle(self.screen, colors[i % 3], (px, py), 4)
 
         self.text.render_centered(self.screen, "VICTORIA!", 100, 56, YELLOW)
-        self.text.render_centered(self.screen, "Recuperaste el terere!",
-                                  170, 26, TERERE_GREEN)
+        self.text.render_centered(self.screen, "Recuperaste el tereré!",
+                                170, 26, TERERE_GREEN)
         self.text.render_centered(self.screen, "El capiateno triunfa sobre el cheto",
-                                  210, 20, WHITE)
+                                210, 20, WHITE)
 
         # Estrellas
         star_y = 280
@@ -79,7 +79,7 @@ class VictoryState:
             self._draw_star(x, star_y, 20, YELLOW)
 
         self.text.render_centered(self.screen, f"Puntaje final: {self.final_score}",
-                                  350, 32, WHITE)
+                                350, 32, WHITE)
 
         rank = "MAESTRO TERERE" if self.stars >= 3 else "CAPIATENO PRO" if self.stars >= 2 else "NOVATO"
         self.text.render_centered(self.screen, f"Rango: {rank}", 395, 22, YELLOW)

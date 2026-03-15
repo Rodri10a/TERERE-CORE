@@ -8,10 +8,10 @@ class Button:
     """Botón con texto, estados normal/hover y detección de click."""
 
     def __init__(self, x: int, y: int, width: int, height: int, text: str,
-                 bg_color: tuple = (80, 80, 80),
-                 hover_color: tuple = (120, 120, 120),
-                 text_color: tuple = WHITE,
-                 font_size: int = 24) -> None:
+                bg_color: tuple = (80, 80, 80),
+                hover_color: tuple = (120, 120, 120),
+                text_color: tuple = WHITE,
+                font_size: int = 24) -> None:
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.bg_color = bg_color

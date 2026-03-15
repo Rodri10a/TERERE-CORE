@@ -2,7 +2,7 @@
 
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_MENU, STATE_GAME,
-                           WHITE, RED, YELLOW, GRAY)
+        WHITE, RED, YELLOW, GRAY)
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from systems.score import ScoreSystem
@@ -14,7 +14,7 @@ class GameOverState:
     """Pantalla de derrota con puntaje final, guardado de highscore y opciones."""
 
     def __init__(self, screen: pygame.Surface, state_manager: StateManager,
-                 input_handler: InputHandler) -> None:
+        input_handler: InputHandler) -> None:
         self.screen = screen
         self.state_manager = state_manager
         self.input_handler = input_handler
@@ -29,7 +29,7 @@ class GameOverState:
         self.btn_retry = Button(btn_x, 380, 200, 50, "REINTENTAR",
                                 bg_color=(80, 150, 80), hover_color=(110, 180, 110))
         self.btn_menu = Button(btn_x, 450, 200, 50, "MENU PRINCIPAL",
-                               bg_color=(80, 80, 150), hover_color=(110, 110, 180))
+                            bg_color=(80, 80, 150), hover_color=(110, 110, 180))
 
         self.animation_timer: int = 0
 
@@ -61,11 +61,11 @@ class GameOverState:
 
         self.text.render_centered(self.screen, "GAME OVER", 120 + shake_x, 52, RED)
 
-        self.text.render_centered(self.screen, "El cheto se escapo con tu terere...",
-                                  200, 22, (200, 180, 180))
+        self.text.render_centered(self.screen, "El cheto se escapó con tu tereré...",
+                                200, 22, (200, 180, 180))
 
         self.text.render_centered(self.screen, f"Puntaje final: {self.final_score}",
-                                  270, 32, YELLOW)
+                                270, 32, YELLOW)
 
         if self.is_highscore:
             self.text.render_centered(self.screen, "NUEVO HIGHSCORE!", 320, 24, (255, 215, 0))

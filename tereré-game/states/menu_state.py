@@ -2,7 +2,7 @@
 
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
-                           TERERE_GREEN, STATE_GAME, YELLOW, DARK_GREEN, GRAY)
+                        TERERE_GREEN, STATE_GAME, YELLOW, DARK_GREEN, GRAY)
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from ui.button import Button
@@ -13,7 +13,7 @@ class MenuState:
     """Menú principal con título, historia y botones de navegación."""
 
     def __init__(self, screen: pygame.Surface, state_manager: StateManager,
-                 input_handler: InputHandler) -> None:
+                input_handler: InputHandler) -> None:
         self.screen = screen
         self.state_manager = state_manager
         self.input_handler = input_handler
@@ -23,11 +23,11 @@ class MenuState:
         # Botones
         btn_x = SCREEN_WIDTH // 2 - 100
         self.btn_play = Button(btn_x, 360, 200, 50, "JUGAR",
-                               bg_color=TERERE_GREEN, hover_color=(130, 210, 110))
+                            bg_color=TERERE_GREEN, hover_color=(130, 210, 110))
         self.btn_scores = Button(btn_x, 425, 200, 50, "HIGHSCORES",
-                                 bg_color=(80, 130, 180), hover_color=(110, 160, 210))
+                                bg_color=(80, 130, 180), hover_color=(110, 160, 210))
         self.btn_quit = Button(btn_x, 490, 200, 50, "SALIR",
-                               bg_color=(180, 60, 60), hover_color=(210, 90, 90))
+                            bg_color=(180, 60, 60), hover_color=(210, 90, 90))
 
         self.show_scores: bool = False
         self.highscores: list = []
@@ -73,7 +73,7 @@ class MenuState:
             offset = (self.animation_timer + i) % 600
             alpha_y = offset - 100
             pygame.draw.circle(self.screen, (40, 70, 40),
-                               (i + 20, alpha_y % SCREEN_HEIGHT), 3)
+                            (i + 20, alpha_y % SCREEN_HEIGHT), 3)
 
         if self.show_scores:
             self._draw_scores()
@@ -82,21 +82,21 @@ class MenuState:
         # Título
         bounce = abs((self.animation_timer % 60) - 30) / 30.0 * 5
         self.text.render_centered(self.screen, "TERERE QUEST",
-                                  int(80 + bounce), 52, YELLOW)
+                                int(80 + bounce), 52, YELLOW)
         self.text.render_centered(self.screen, "TERERE QUEST",
-                                  int(82 + bounce), 50, TERERE_GREEN)
+                                int(82 + bounce), 50, TERERE_GREEN)
 
         # Subtítulo
         self.text.render_centered(self.screen, "La venganza del capiateno",
-                                  150, 22, WHITE)
+                                150, 22, WHITE)
 
         # Historia
         story_lines = [
-            "Un cheto de Asuncion robo el terere",
+            "Un cheto de Asunción robó el tereré",
             "de unos capiatenos en la plaza...",
             "",
-            "Recupera tu terere enfrentando al cheto",
-            "en peleas epicas y minijuegos!",
+            "Recupera tu tereré enfrentando al cheto",
+            "en peleas épicas y minijuegos!",
         ]
         y = 200
         for line in story_lines:
@@ -112,7 +112,7 @@ class MenuState:
 
         # Controles
         self.text.render_centered(self.screen, "Flechas: Mover | ESPACIO: Saltar | Z: Atacar | X: Especial",
-                                  570, 14, GRAY)
+                                570, 14, GRAY)
 
     def _draw_scores(self) -> None:
         """Dibuja la pantalla de highscores."""
