@@ -35,13 +35,13 @@ class Character:
 
     def get_attack_rect(self) -> pygame.Rect:
         """Retorna el rectángulo de ataque frente al personaje."""
-        attack_width = 40
+        attack_width = 80
         if self.direction == 1:
-            return pygame.Rect(int(self.x + self.width), int(self.y + 10),
-                               attack_width, self.height - 20)
+            return pygame.Rect(int(self.x + self.width), int(self.y),
+                               attack_width, self.height)
         else:
-            return pygame.Rect(int(self.x - attack_width), int(self.y + 10),
-                               attack_width, self.height - 20)
+            return pygame.Rect(int(self.x - attack_width), int(self.y),
+                               attack_width, self.height)
 
     def take_damage(self, amount: int, knockback_dir: int = 0) -> None:
         """Recibe daño y aplica knockback."""

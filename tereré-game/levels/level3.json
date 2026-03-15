@@ -5,17 +5,12 @@
   "bg_image": "villarrica.jpg",
   "bg_color": [60, 30, 50],
   "score_bonus": 800,
-  "enemy_start_x": 450,
+  "enemy_start_x": 900,
   "enemy": {
     "speed": 5,
     "health": 200,
     "damage": 20
   },
   "minigame": "yuyos_quiz",
-  "platforms": [
-    {"x": 0, "y": 500, "width": 800, "height": 100},
-    {"x": 80, "y": 450, "width": 180, "height": 15},
-    {"x": 180, "y": 390, "width": 130, "height": 15},
-    {"x": 500, "y": 360, "width": 200, "height": 15}
-  ]
+  "platforms": []
 }

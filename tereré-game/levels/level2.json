@@ -5,16 +5,12 @@
   "bg_image": "asuncion.jpg",
   "bg_color": [100, 120, 150],
   "score_bonus": 500,
-  "enemy_start_x": 580,
+  "enemy_start_x": 950,
   "enemy": {
     "speed": 4,
     "health": 150,
     "damage": 15
   },
   "minigame": "esquiva_cheto",
-  "platforms": [
-    {"x": 0, "y": 500, "width": 800, "height": 100},
-    {"x": 80, "y": 420, "width": 130, "height": 12},
-    {"x": 570, "y": 400, "width": 150, "height": 12}
-  ]
+  "platforms": []
 }

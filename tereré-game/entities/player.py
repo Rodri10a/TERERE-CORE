@@ -1,5 +1,6 @@
 """Personaje controlado por el jugador - el capiateño."""
 
+import os
 import pygame
 from entities.character import Character
 from core.input_handler import InputHandler
@@ -9,10 +10,32 @@ from core.settings import JUMP_FORCE, PLAYER_SPEED, ATTACK_COOLDOWN, SPECIAL_COO
 class Player(Character):
     """El capiateño protagonista, controlado por teclado con combos de ataque."""
 
-    def __init__(self, x: float, y: float, input_handler: InputHandler) -> None:
-        super().__init__(x, y, 50, 70, color=(60, 140, 60), health=100,
-                         speed=PLAYER_SPEED, damage=10)
+    def __init__(self, x: float, y: float, input_handler: InputHandler,
+                 character_file: str = "personaje_principal.jpg") -> None:
+        super().__init__(x, y, 150, 250, color=(60, 140, 60), health=100,
+                         speed=PLAYER_SPEED, damage=15)
         self.input_handler = input_handler
+
+        # Cargar sprite del personaje seleccionado
+        self.sprite: pygame.Surface | None = None
+        self.sprite_flipped: pygame.Surface | None = None
+        sprite_path = os.path.join(os.path.dirname(__file__), "..",
+                                   "assets", "images", "characters",
+                                   character_file)
+        if os.path.exists(sprite_path):
+            img = pygame.image.load(sprite_path).convert_alpha()
+            img = pygame.transform.scale(img, (self.width, self.height))
+            # Quitar fondo blanco/gris claro
+            clean = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+            for px in range(img.get_width()):
+                for py in range(img.get_height()):
+                    pixel = img.get_at((px, py))
+                    r, g, b, a = pixel[0], pixel[1], pixel[2], pixel[3] if len(pixel) > 3 else 255
+                    if a < 30 or (r > 230 and g > 230 and b > 230):
+                        continue
+                    clean.set_at((px, py), (r, g, b, 255))
+            self.sprite = clean
+            self.sprite_flipped = pygame.transform.flip(self.sprite, True, False)
         self.combo_count: int = 0
         self.combo_timer: int = 0
         self.special_cooldown: int = 0
@@ -110,21 +133,39 @@ class Player(Character):
             self.state = "idle"
 
     def draw(self, screen: pygame.Surface) -> None:
-        """Dibuja al capiateño con detalles visuales."""
-        super().draw(screen)
+        """Dibuja al capiateño con sprite o fallback a rectángulo."""
+        if self.sprite:
+            # Parpadeo blanco al recibir daño
+            if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
+                flash = self.sprite.copy()
+                flash.fill((255, 255, 255), special_flags=pygame.BLEND_ADD)
+                if self.direction == -1:
+                    flash = pygame.transform.flip(flash, True, False)
+                screen.blit(flash, (int(self.x), int(self.y)))
+            else:
+                if self.direction == -1:
+                    screen.blit(self.sprite_flipped, (int(self.x), int(self.y)))
+                else:
+                    screen.blit(self.sprite, (int(self.x), int(self.y)))
 
-        # Gorra (accesorio del capiateño)
-        hat_rect = pygame.Rect(int(self.x - 3), int(self.y - 8), self.width + 6, 10)
-        pygame.draw.rect(screen, (180, 50, 50), hat_rect)
+            # Barra de vida sobre el personaje
+            bar_width = self.width
+            bar_y = int(self.y - 10)
+            health_ratio = self.health / self.max_health
+            pygame.draw.rect(screen, (60, 60, 60), (int(self.x), bar_y, bar_width, 5))
+            bar_color = (50, 200, 50) if health_ratio > 0.5 else (200, 200, 0) if health_ratio > 0.25 else (200, 50, 50)
+            pygame.draw.rect(screen, bar_color, (int(self.x), bar_y, int(bar_width * health_ratio), 5))
+        else:
+            super().draw(screen)
 
         # Indicador de ataque
         if self.is_attacking:
             attack_rect = self.get_attack_rect()
             s = pygame.Surface((attack_rect.width, attack_rect.height), pygame.SRCALPHA)
             if self.special_cooldown >= SPECIAL_COOLDOWN - 10:
-                s.fill((100, 200, 255, 120))  # Azul para especial (tereré splash)
+                s.fill((100, 200, 255, 120))
             else:
-                s.fill((255, 255, 100, 100))  # Amarillo para normal
+                s.fill((255, 255, 100, 100))
             screen.blit(s, (attack_rect.x, attack_rect.y))
 
         # Indicador de especial listo
