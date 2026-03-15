@@ -2,6 +2,7 @@
   "id": 1,
   "name": "Plaza de Capiata",
   "background": "plaza",
+  "bg_image": "capiata.jpg",
   "bg_color": [135, 200, 235],
   "score_bonus": 300,
   "enemy_start_x": 600,
