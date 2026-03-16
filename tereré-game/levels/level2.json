@@ -1,8 +1,8 @@
 {
   "id": 2,
-  "name": "Calles de Villarrica",
+  "name": "Campus de la UNA",
   "background": "calle",
-  "bg_image": "villarrica.jpg",
+  "bg_image": "sanlorenzo.jpg",
   "bg_color": [100, 120, 150],
   "score_bonus": 500,
   "enemy_start_x": 950,

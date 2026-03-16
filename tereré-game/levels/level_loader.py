@@ -22,7 +22,7 @@ DEFAULT_LEVELS = {
     },
     2: {
         "id": 2,
-        "name": "Calles de Villarrica",
+        "name": "Campus de la UNA",
         "background": "calle",
         "bg_color": [100, 120, 150],
         "score_bonus": 500,
@@ -53,7 +53,7 @@ DEFAULT_LEVELS = {
     },
     4: {
         "id": 4,
-        "name": "Boss Final - Asuncion",
+        "name": "Terreno final : Asuncion",
         "background": "ciudad",
         "bg_color": [60, 30, 50],
         "score_bonus": 1000,
