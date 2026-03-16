@@ -12,17 +12,20 @@ from ui.text_renderer import TextRenderer
 CHARACTERS = [
     {
         "name": "Capiateno",
-        "file": "personaje_principal.jpg",
-        "description": "El capiateno clasico con su sombrero",
+        "file": "capiateño",
+        "preview": "capiateño/frame1.png",
+        "description": "El capiateno clasico animado",
     },
     {
         "name": "Karateka",
         "file": "personaje1111.png",
+        "preview": "personaje1111.png",
         "description": "Peleador con cinta roja",
     },
     {
         "name": "General",
         "file": "personaje22.webp",
+        "preview": "personaje22.webp",
         "description": "El general de rojo",
     },
 ]
@@ -47,7 +50,7 @@ class SelectState:
         base = os.path.join(os.path.dirname(__file__), "..",
                             "assets", "images", "characters")
         for char in self.characters:
-            path = os.path.join(base, char["file"])
+            path = os.path.join(base, char.get("preview", char["file"]))
             if os.path.exists(path):
                 img = pygame.image.load(path).convert_alpha()
                 img = pygame.transform.scale(img, (180, 250))

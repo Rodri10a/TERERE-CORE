@@ -1,0 +1,16 @@
+{
+  "id": 4,
+  "name": "Boss Final - Asuncion",
+  "background": "ciudad",
+  "bg_image": "asuncion.jpg",
+  "bg_color": [60, 30, 50],
+  "score_bonus": 1000,
+  "enemy_start_x": 900,
+  "enemy": {
+    "speed": 6,
+    "health": 250,
+    "damage": 25
+  },
+  "minigame": null,
+  "platforms": []
+}

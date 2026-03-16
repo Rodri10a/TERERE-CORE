@@ -1,15 +1,15 @@
 {
   "id": 3,
-  "name": "Boss Final - Mansion del Cheto",
-  "background": "mansion",
-  "bg_image": "villarrica.jpg",
-  "bg_color": [60, 30, 50],
-  "score_bonus": 800,
+  "name": "Barrio de Luque",
+  "background": "barrio",
+  "bg_image": "luque.jpg",
+  "bg_color": [120, 140, 100],
+  "score_bonus": 600,
   "enemy_start_x": 900,
   "enemy": {
     "speed": 5,
-    "health": 200,
-    "damage": 20
+    "health": 180,
+    "damage": 18
   },
   "minigame": "yuyos_quiz",
   "platforms": []

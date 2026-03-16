@@ -81,7 +81,13 @@ class EsquivaCheto(BaseMinigame):
         if self.input_handler.was_just_pressed("DOWN") and self.player_lane < 2:
             self.player_lane += 1
 
-        if self.timer <= 0 or self.lives <= 0:
+        if self.lives <= 0:
+            self.completed = True
+            self.failed = True
+            self.score_earned = 0
+            return
+
+        if self.timer <= 0:
             self.completed = True
             self.score_earned = self.dodged * 30 + self.lives * 100
             return
@@ -136,7 +142,13 @@ class EsquivaCheto(BaseMinigame):
                           self.player_width + 6, 8))
 
         # UI
-        self.text.render(self.screen, f"Vidas: {'<3 ' * self.lives}",
+        hearts = ""
+        for i in range(3):
+            if i < self.lives:
+                hearts += "♥ "
+            else:
+                hearts += "♡ "
+        self.text.render(self.screen, f"Vidas: {hearts.strip()}",
                          20, 70, 22, RED)
         self.text.render(self.screen, f"Tiempo: {self.get_time_remaining():.0f}s",
                          SCREEN_WIDTH - 150, 70, 22, WHITE)

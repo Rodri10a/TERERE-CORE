@@ -2,7 +2,7 @@
 
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_GAME, STATE_MENU,
-                           WHITE, BLACK, TERERE_GREEN, YELLOW)
+                           STATE_GAMEOVER, WHITE, BLACK, TERERE_GREEN, YELLOW, RED)
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from minigames.terere_rush import TerereRush
@@ -34,6 +34,7 @@ class MinigameState:
         self.minigame = minigame_class(screen, input_handler)
 
         self.show_result: bool = False
+        self.show_failed: bool = False
         self.result_timer: int = 180
 
         # Pausa
@@ -72,13 +73,18 @@ class MinigameState:
         if self.show_result:
             self.result_timer -= 1
             if self.result_timer <= 0:
-                self._advance_to_next_level()
+                if self.show_failed:
+                    self.state_manager.change_state(STATE_GAMEOVER)
+                else:
+                    self._advance_to_next_level()
             return
 
         self.minigame.update()
 
         if self.minigame.completed:
             self.state_manager.shared_data["score"] += self.minigame.score_earned
+            if self.minigame.failed:
+                self.show_failed = True
             self.show_result = True
 
     def _setup_pause_buttons(self) -> None:
@@ -134,16 +140,26 @@ class MinigameState:
     def draw(self) -> None:
         """Dibuja el minijuego o los resultados."""
         if self.show_result:
-            self.screen.fill((20, 40, 20))
-            self.text.render_centered(self.screen, "MINIJUEGO COMPLETADO!",
-                                      180, 36, YELLOW)
-            self.text.render_centered(self.screen, f"Puntos ganados: {self.minigame.score_earned}",
-                                      260, 28, WHITE)
-            self.text.render_centered(self.screen,
-                                      f"Puntaje total: {self.state_manager.shared_data['score']}",
-                                      310, 22, TERERE_GREEN)
-            self.text.render_centered(self.screen, "Preparate para el siguiente nivel...",
-                                      400, 20, (180, 180, 180))
+            if self.show_failed:
+                self.screen.fill((50, 20, 20))
+                self.text.render_centered(self.screen, "PERDISTE!",
+                                          180, 36, RED)
+                self.text.render_centered(self.screen, "Te quedaste sin vidas...",
+                                          260, 28, WHITE)
+                self.text.render_centered(self.screen,
+                                          f"Puntaje final: {self.state_manager.shared_data['score']}",
+                                          310, 22, TERERE_GREEN)
+            else:
+                self.screen.fill((20, 40, 20))
+                self.text.render_centered(self.screen, "MINIJUEGO COMPLETADO!",
+                                          180, 36, YELLOW)
+                self.text.render_centered(self.screen, f"Puntos ganados: {self.minigame.score_earned}",
+                                          260, 28, WHITE)
+                self.text.render_centered(self.screen,
+                                          f"Puntaje total: {self.state_manager.shared_data['score']}",
+                                          310, 22, TERERE_GREEN)
+                self.text.render_centered(self.screen, "Preparate para el siguiente nivel...",
+                                          400, 20, (180, 180, 180))
         else:
             self.minigame.draw()
 

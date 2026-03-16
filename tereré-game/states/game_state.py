@@ -239,8 +239,16 @@ class GameState:
                     pygame.draw.rect(self.screen, (200, 200, 100), (x + 10, wy, 15, 15))
                     pygame.draw.rect(self.screen, (200, 200, 100), (x + 35, wy, 15, 15))
         elif self.current_level == 3:
-            pygame.draw.circle(self.screen, (220, 100, 50), (SCREEN_WIDTH // 2, 100), 60)
-            pygame.draw.circle(self.screen, (240, 150, 80), (SCREEN_WIDTH // 2, 100), 45)
+            for x in [120, 400, 680]:
+                pygame.draw.rect(self.screen, (90, 75, 55), (x, GROUND_Y - 100, 25, 100))
+                pygame.draw.circle(self.screen, (60, 130, 50), (x + 12, GROUND_Y - 120), 35)
+        elif self.current_level == 4:
+            for x in [50, 200, 400, 600, 750]:
+                h = 180 + (x % 120)
+                pygame.draw.rect(self.screen, (70, 70, 90), (x, GROUND_Y - h, 70, h))
+                for wy in range(GROUND_Y - h + 20, GROUND_Y - 10, 30):
+                    pygame.draw.rect(self.screen, (220, 200, 100), (x + 10, wy, 18, 18))
+                    pygame.draw.rect(self.screen, (220, 200, 100), (x + 42, wy, 18, 18))
 
     def _setup_pause_buttons(self) -> None:
         """Crea los botones del menú de pausa."""
@@ -292,12 +300,14 @@ class GameState:
         platform_colors = {
             1: (100, 70, 40),   # Madera (banco de plaza)
             2: (70, 70, 90),    # Metal (techo de auto / parada de bus)
-            3: (110, 75, 110),  # Piedra lujosa (mansion)
+            3: (90, 80, 60),    # Madera rustica (barrio)
+            4: (80, 80, 100),   # Concreto (ciudad)
         }
         edge_colors = {
             1: (60, 40, 20),
             2: (50, 50, 70),
-            3: (80, 50, 90),
+            3: (60, 50, 35),
+            4: (50, 50, 70),
         }
         color = platform_colors.get(self.current_level, BROWN)
         edge = edge_colors.get(self.current_level, DARK_GREEN)

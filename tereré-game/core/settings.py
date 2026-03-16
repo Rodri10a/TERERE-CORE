@@ -47,4 +47,4 @@ COMBO_WINDOW: int = 30
 KNOCKBACK_FORCE: float = 8.0
 
 # Niveles
-MAX_LEVELS: int = 3
+MAX_LEVELS: int = 4

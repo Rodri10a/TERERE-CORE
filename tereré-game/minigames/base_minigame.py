@@ -15,6 +15,7 @@ class BaseMinigame(ABC):
         self.duration: int = duration  # En frames (30s = 1800 a 60fps)
         self.timer: int = duration
         self.completed: bool = False
+        self.failed: bool = False
         self.score_earned: int = 0
 
     def get_time_remaining(self) -> float:

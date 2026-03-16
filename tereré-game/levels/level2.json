@@ -1,8 +1,8 @@
 {
   "id": 2,
-  "name": "Calle de Asuncion",
+  "name": "Calles de Villarrica",
   "background": "calle",
-  "bg_image": "asuncion.jpg",
+  "bg_image": "villarrica.jpg",
   "bg_color": [100, 120, 150],
   "score_bonus": 500,
   "enemy_start_x": 950,

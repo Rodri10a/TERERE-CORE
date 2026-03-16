@@ -2,7 +2,7 @@
 
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK,
-                           TERERE_GREEN, YELLOW, GRAY, STATE_SELECT, DARK_GREEN)
+                           TERERE_GREEN, YELLOW, GRAY, STATE_GAME, DARK_GREEN)
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from ui.text_renderer import TextRenderer
@@ -23,9 +23,11 @@ class StoryState:
     def handle_events(self, event: pygame.event.Event) -> None:
         """Avanza con ENTER o click."""
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-            self.state_manager.change_state(STATE_SELECT)
+            self.state_manager.shared_data["character"] = "capiateño"
+            self.state_manager.change_state(STATE_GAME)
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            self.state_manager.change_state(STATE_SELECT)
+            self.state_manager.shared_data["character"] = "capiateño"
+            self.state_manager.change_state(STATE_GAME)
 
     def update(self, dt: float) -> None:
         """Actualiza animacion."""
