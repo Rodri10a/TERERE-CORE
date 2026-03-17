@@ -2,7 +2,7 @@
   "id": 3,
   "name": "Barrio de Luque",
   "background": "barrio",
-  "bg_image": "luque.jpg",
+  "bg_image": "luque/stage_luque.jpg",
   "bg_color": [120, 140, 100],
   "score_bonus": 600,
   "enemy_start_x": 900,
@@ -11,7 +11,11 @@
     "health": 180,
     "damage": 18
   },
+<<<<<<< HEAD
   "music":"stage_luque.mp3",
   "minigame": "terere_rush",
+=======
+  "minigame": "machete_rush",
+>>>>>>> 2d5d03a8a1b9e995139a8e691d834c08364f98de
   "platforms": []
 }

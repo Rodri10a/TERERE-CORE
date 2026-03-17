@@ -57,6 +57,16 @@ class EsquivaCheto(BaseMinigame):
     def __init__(self, screen: pygame.Surface, input_handler: InputHandler) -> None:
         super().__init__(screen, input_handler, duration=900)  # 15 seg
         self.text = TextRenderer()
+
+        # Imagen de fondo (asfaltado)
+        self.bg_image: pygame.Surface | None = None
+        bg_path = os.path.join(os.path.dirname(__file__), "..",
+                               "assets", "images", "backgrounds",
+                               "Imagen_asfaltado_minijuego.png")
+        if os.path.exists(bg_path):
+            img = pygame.image.load(bg_path).convert()
+            self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
         self.player_lane: int = 1  # 0, 1, 2
         self.player_x: int = 100
         self.player_width: int = 40
@@ -133,17 +143,12 @@ class EsquivaCheto(BaseMinigame):
         self.objects = [o for o in self.objects if o.active]
 
     def draw(self) -> None:
-        self.screen.fill((50, 40, 60))
+        if self.bg_image:
+            self.screen.blit(self.bg_image, (0, 0))
+        else:
+            self.screen.fill((50, 40, 60))
 
         self.text.render_title_centered(self.screen, "ESQUIVA LOS BACHES", 15, 18, YELLOW)
-
-        # Carriles
-        for i in range(3):
-            lane_y = 180 + i * 120
-            pygame.draw.rect(self.screen, (60, 50, 70),
-                             (0, lane_y, SCREEN_WIDTH, 60))
-            pygame.draw.line(self.screen, (80, 70, 90),
-                             (0, lane_y), (SCREEN_WIDTH, lane_y), 1)
 
         # Baches
         for obj in self.objects:
