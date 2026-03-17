@@ -44,15 +44,14 @@ class Character:
                                attack_width, self.height)
 
     def take_damage(self, amount: int, knockback_dir: int = 0) -> None:
-        """Recibe daño y aplica knockback."""
-        if self.hurt_timer > 0:
+        if hasattr(self, "damage_cooldown") and self.damage_cooldown > 0:
             return
-        self.health -= amount
-        self.hurt_timer = 30
-        self.vel_x = knockback_dir * 6
-        if self.health < 0:
-            self.health = 0
 
+        self.health -= amount
+        self.vel_x = knockback_dir * 6
+
+        if hasattr(self, "damage_cooldown"):
+            self.damage_cooldown = self.damage_cooldown_max
     def is_alive(self) -> bool:
         """Retorna True si el personaje tiene vida."""
         return self.health > 0
