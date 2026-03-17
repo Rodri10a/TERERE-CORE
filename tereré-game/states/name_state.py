@@ -2,7 +2,7 @@
 
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK,
-                           TERERE_GREEN, YELLOW, GRAY, STATE_STORY, DARK_GREEN)
+                           TERERE_GREEN, YELLOW, GRAY, STATE_GAME, DARK_GREEN)
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from ui.text_renderer import TextRenderer
@@ -26,7 +26,8 @@ class NameState:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN and len(self.player_name) > 0:
                 self.state_manager.shared_data["player_name"] = self.player_name
-                self.state_manager.change_state(STATE_STORY)
+                self.state_manager.shared_data["character"] = "capiateno"
+                self.state_manager.change_state(STATE_GAME)
             elif event.key == pygame.K_BACKSPACE:
                 self.player_name = self.player_name[:-1]
             elif event.key == pygame.K_ESCAPE:

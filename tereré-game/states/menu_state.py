@@ -21,6 +21,14 @@ class MenuState:
         self.text = TextRenderer()
         self.animation_timer: int = 0
 
+        # Imagen de fondo
+        self.bg_image: pygame.Surface | None = None
+        bg_path = os.path.join(os.path.dirname(__file__), "..",
+                               "assets", "images", "backgrounds", "antesjuego.png")
+        if os.path.exists(bg_path):
+            img = pygame.image.load(bg_path).convert()
+            self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
         # Música de portada
         self.portada_music: pygame.mixer.Sound | None = None
         music_path = os.path.join(os.path.dirname(__file__), "..",
@@ -78,53 +86,30 @@ class MenuState:
 
     def draw(self) -> None:
         """Dibuja el menú principal."""
-        self.screen.fill((30, 60, 30))
-
-        # Fondo decorativo
-        for i in range(0, SCREEN_WIDTH, 40):
-            offset = (self.animation_timer + i) % 600
-            alpha_y = offset - 100
-            pygame.draw.circle(self.screen, (40, 70, 40),
-                               (i + 20, alpha_y % SCREEN_HEIGHT), 3)
+        if self.bg_image:
+            self.screen.blit(self.bg_image, (0, 0))
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 100))
+            self.screen.blit(overlay, (0, 0))
+        else:
+            self.screen.fill((30, 60, 30))
 
         if self.show_scores:
             self._draw_scores()
             return
 
         # Título
-        bounce = abs((self.animation_timer % 60) - 30) / 30.0 * 5
-        self.text.render_title_centered(self.screen, "TERERE CORE",
-                                        int(78 + bounce), 32, YELLOW)
-        self.text.render_title_centered(self.screen, "TERERE CORE",
-                                        int(82 + bounce), 32, TERERE_GREEN)
+        self.text.render_title_centered(self.screen, "TERERE CORE", 80, 32, YELLOW)
 
         # Subtítulo
         self.text.render_centered(self.screen, "La venganza del capiateno",
-                                  130, 12, WHITE)
-
-        # Historia
-        story_lines = [
-            "Un cheto de Asuncion robo el terere",
-            "de unos capiatenos en la plaza...",
-            "",
-            "Recupera tu terere enfrentando al cheto",
-            "en peleas epicas y minijuegos",
-        ]
-        y = 175
-        for line in story_lines:
-            if line:
-                self.text.render_centered(self.screen, line, y, 10, (200, 220, 200))
-            y += 20
+                                  130, 14, (255, 200, 100))
 
         # Botones
         mouse_pos = pygame.mouse.get_pos()
         self.btn_play.draw(self.screen, mouse_pos)
         self.btn_scores.draw(self.screen, mouse_pos)
         self.btn_quit.draw(self.screen, mouse_pos)
-
-        # Controles
-        self.text.render_centered(self.screen, "A-D: Mover  ESPACIO-W: Saltar  ENTER: Atacar  J: Especial",
-                                  570, 8, GRAY)
 
     def _draw_scores(self) -> None:
         """Dibuja la pantalla de highscores."""
