@@ -12,8 +12,8 @@ from ui.text_renderer import TextRenderer
 CHARACTERS = [
     {
         "name": "Capiateno",
-        "file": "capiateño",
-        "preview": "capiateño/frame1.png",
+        "file": "capiateno",
+        "preview": "capiateno/frame1.png",
         "description": "El capiateno clasico animado",
     },
     {

@@ -26,7 +26,7 @@ class Player(Character):
     """El capiateño protagonista, controlado por teclado con combos de ataque."""
 
     def __init__(self, x: float, y: float, input_handler: InputHandler,
-                 character_file: str = "capiateño") -> None:
+                 character_file: str = "capiateno") -> None:
         super().__init__(x, y, 150, 250, color=(60, 140, 60), health=100,
                          speed=PLAYER_SPEED, damage=15)
         self.input_handler = input_handler
