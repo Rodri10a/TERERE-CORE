@@ -36,6 +36,8 @@ class Enemy(Character):
         self.target_y: float = 0.0
         self.is_attacking: bool = False
         self.attack_active_frames: int = 0
+        self.damage_cooldown_max = 5
+        self.damage_cooldown = 0
 
     def _load_sprites(self, sprite_folder: str) -> None:
         """Carga los frames idle desde la carpeta del enemigo."""
@@ -114,7 +116,6 @@ class Enemy(Character):
             self.ai_state = "patrol"
 
     def update(self) -> None:
-        """Actualiza al enemigo cada frame."""
         if self.ai_state == "patrol":
             self._do_patrol()
         elif self.ai_state == "chase":
@@ -128,6 +129,10 @@ class Enemy(Character):
             self.attack_active_frames -= 1
         else:
             self.is_attacking = False
+
+
+        if self.damage_cooldown > 0:
+            self.damage_cooldown -= 1
 
         super().update()
 
