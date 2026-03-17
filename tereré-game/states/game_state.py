@@ -69,9 +69,7 @@ class GameState:
         enemy_health = enemy_config.get("health", 100)
         enemy_damage = enemy_config.get("damage", 10)
         enemy_start_x = self.level_data.get("enemy_start_x", 600)
-
-        self.enemy = Enemy(enemy_start_x, GROUND_Y - 100, speed=enemy_speed,
-                           health=enemy_health, damage=enemy_damage)
+        self.enemy = Enemy(enemy_start_x, GROUND_Y - 100, speed=enemy_speed, health=enemy_health, damage=enemy_damage)
 
         # Restaurar vida del jugador
         player_health = self.state_manager.shared_data.get("player_health", 100)
