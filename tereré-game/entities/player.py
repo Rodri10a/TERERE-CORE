@@ -45,6 +45,8 @@ class Player(Character):
         self.sprite_flipped: pygame.Surface | None = None
         self.has_animation: bool = False
         self.prev_anim_state: str = ""
+        self.damage_cooldown_max = 40
+        self.damage_cooldown = 0
 
         self._load_sprites(character_file)
 
@@ -146,8 +148,12 @@ class Player(Character):
             self.on_ground = False
             self.state = "jumping"
 
-        # Ataque normal (combo de 2 golpes)
-        if self.input_handler.was_just_pressed("ATTACK") and self.attack_cooldown <= 0:
+        # Ataque normal 
+        if (
+            self.input_handler.was_just_pressed("ATTACK")
+            and self.attack_cooldown <= 0
+            and not self.is_attacking
+        ):
             self.attack()
 
         # Ataque especial
@@ -157,12 +163,13 @@ class Player(Character):
     def attack(self) -> None:
         """Ejecuta un ataque normal con sistema de combo."""
         self.is_attacking = True
-        self.attack_active_frames = 8
+        self.attack_active_frames = 12
+        self.attack_cooldown = ATTACK_COOLDOWN
         self.state = "attacking"
 
         if self.combo_timer > 0 and self.combo_count < 2:
             self.combo_count += 1
-            self.attack_cooldown = ATTACK_COOLDOWN // 2
+            self.attack_cooldown = ATTACK_COOLDOWN
         else:
             self.combo_count = 1
             self.attack_cooldown = ATTACK_COOLDOWN
@@ -246,6 +253,9 @@ class Player(Character):
 
         if self.special_cooldown > 0:
             self.special_cooldown -= 1
+        
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
 
         if self.attack_active_frames > 0:
             self.attack_active_frames -= 1
@@ -253,6 +263,9 @@ class Player(Character):
             self.is_attacking = False
             if self.state == "attacking":
                 self.state = "idle"
+        
+        if self.damage_cooldown > 0:
+            self.damage_cooldown -= 1
 
         if self.on_ground and self.state == "jumping":
             self.state = "idle"
