@@ -64,11 +64,11 @@ class VictoryState:
             colors = [(255, 215, 0), (100, 200, 100), (100, 180, 255)]
             pygame.draw.circle(self.screen, colors[i % 3], (px, py), 4)
 
-        self.text.render_centered(self.screen, "VICTORIA!", 100, 56, YELLOW)
-        self.text.render_centered(self.screen, "Recuperaste el terere!",
-                                  170, 26, TERERE_GREEN)
+        self.text.render_title_centered(self.screen, "VICTORIA", 80, 32, YELLOW)
+        self.text.render_centered(self.screen, "Recuperaste el terere",
+                                  140, 14, TERERE_GREEN)
         self.text.render_centered(self.screen, "El capiateno triunfa sobre el cheto",
-                                  210, 20, WHITE)
+                                  170, 12, WHITE)
 
         # Estrellas
         star_y = 280
@@ -79,10 +79,10 @@ class VictoryState:
             self._draw_star(x, star_y, 20, YELLOW)
 
         self.text.render_centered(self.screen, f"Puntaje final: {self.final_score}",
-                                  350, 32, WHITE)
+                                  330, 16, WHITE)
 
         rank = "MAESTRO TERERE" if self.stars >= 3 else "CAPIATENO PRO" if self.stars >= 2 else "NOVATO"
-        self.text.render_centered(self.screen, f"Rango: {rank}", 395, 22, YELLOW)
+        self.text.render_centered(self.screen, f"Rango: {rank}", 370, 12, YELLOW)
 
         mouse_pos = pygame.mouse.get_pos()
         self.btn_menu.draw(self.screen, mouse_pos)

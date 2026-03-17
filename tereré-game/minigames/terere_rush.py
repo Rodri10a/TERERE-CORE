@@ -109,14 +109,14 @@ class TerereRush(BaseMinigame):
     def draw(self) -> None:
         self.screen.fill((30, 80, 50))
 
-        self.text.render_centered(self.screen, "TERERE RUSH!", 20, 30, YELLOW)
-        self.text.render(self.screen, f"Atrapadas: {self.caught}", 20, 60, 22, WHITE)
-        self.text.render(self.screen, f"Perdidas: {self.missed}", 20, 85, 18, RED)
+        self.text.render_title_centered(self.screen, "TERERE RUSH", 15, 20, YELLOW)
+        self.text.render(self.screen, f"Atrapadas: {self.caught}", 20, 65, 10, WHITE)
+        self.text.render(self.screen, f"Perdidas: {self.missed}", 20, 80, 10, RED)
         self.text.render(self.screen, f"Tiempo: {self.get_time_remaining():.0f}s",
-                         SCREEN_WIDTH - 150, 60, 22, WHITE)
+                         SCREEN_WIDTH - 160, 65, 10, WHITE)
         if self.streak >= 3:
             streak_color = YELLOW if self.streak < 6 else (255, 140, 0)
-            self.text.render_centered(self.screen, f"Racha x{self.streak}!", 90, 22, streak_color)
+            self.text.render_centered(self.screen, f"Racha x{self.streak}", 90, 12, streak_color)
 
         # Guampas
         for g in self.guampas:
@@ -129,5 +129,5 @@ class TerereRush(BaseMinigame):
         pygame.draw.rect(self.screen, (140, 100, 40), basket_rect, 3)
 
         # Instrucciones
-        self.text.render_centered(self.screen, "Flechas / WASD para mover la canasta",
-                                  SCREEN_HEIGHT - 30, 16, (150, 180, 150))
+        self.text.render_centered(self.screen, "Flechas y WASD para mover la canasta",
+                                  SCREEN_HEIGHT - 25, 10, (150, 180, 150))
