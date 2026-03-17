@@ -6,16 +6,20 @@ from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_GAME, STATE_MENU,
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from minigames.terere_rush import TerereRush
+from minigames.chipa_rush import ChipaRush
 from minigames.esquiva_cheto import EsquivaCheto
 from minigames.yuyos_quiz import YuyosQuiz
+from minigames.machete_rush import MacheteRush
 from ui.text_renderer import TextRenderer
 from ui.button import Button
 
 
 MINIGAME_MAP = {
     "terere_rush": TerereRush,
+    "chipa_rush": ChipaRush,
     "esquiva_cheto": EsquivaCheto,
     "yuyos_quiz": YuyosQuiz,
+    "machete_rush": MacheteRush,
 }
 
 
@@ -71,12 +75,12 @@ class MinigameState:
             return
 
         if self.show_result:
-            self.result_timer -= 1
-            if self.result_timer <= 0:
-                if self.show_failed:
+            if self.show_failed:
+                self.result_timer -= 1
+                if self.result_timer <= 0:
                     self.state_manager.change_state(STATE_GAMEOVER)
-                else:
-                    self._advance_to_next_level()
+            else:
+                self._advance_to_next_level()
             return
 
         self.minigame.update()
@@ -119,8 +123,10 @@ class MinigameState:
         self.text.render_centered(self.screen, "CONTROLES", 185, 14, TERERE_GREEN)
         instructions = {
             "terere_rush":   [("Mover canasta", "Flechas  /  A  D")],
+            "chipa_rush":    [("Mover canasta", "Flechas  /  A  D")],
             "esquiva_cheto": [("Cambiar carril", "Flechas  /  W  S")],
             "yuyos_quiz":    [("Seleccionar",    "Click izquierdo")],
+            "machete_rush":  [("Mover canasta", "Flechas  /  A  D")],
         }
         lines = instructions.get(self.minigame_id, [])
         lines.append(("Pausar", "Escape"))

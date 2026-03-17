@@ -1,6 +1,7 @@
 """Pantalla de victoria al completar el juego."""
 
 import math
+import os
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_MENU,
                            WHITE, YELLOW, TERERE_GREEN, GRAY)
@@ -21,6 +22,14 @@ class VictoryState:
         self.input_handler = input_handler
         self.text = TextRenderer()
         self.final_score: int = state_manager.shared_data.get("score", 0)
+
+        # Imagen de fondo
+        self.bg_image: pygame.Surface | None = None
+        bg_path = os.path.join(os.path.dirname(__file__), "..",
+                               "assets", "images", "backgrounds", "Imagen_de_victoria.png")
+        if os.path.exists(bg_path):
+            img = pygame.image.load(bg_path).convert()
+            self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         # Guardar highscore
         self.score_system = ScoreSystem()
@@ -53,7 +62,13 @@ class VictoryState:
 
     def draw(self) -> None:
         """Dibuja la pantalla de victoria."""
-        self.screen.fill((20, 50, 30))
+        if self.bg_image:
+            self.screen.blit(self.bg_image, (0, 0))
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 80))
+            self.screen.blit(overlay, (0, 0))
+        else:
+            self.screen.fill((20, 50, 30))
 
         # Partículas de celebración
         for i in range(20):

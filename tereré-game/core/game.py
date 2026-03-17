@@ -12,7 +12,8 @@ class Game:
     def __init__(self) -> None:
         """Inicializa pygame, la pantalla y los sistemas."""
         pygame.init()
-        pygame.mixer.init()
+        pygame.mixer.quit()
+        pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=4096)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()

@@ -2,7 +2,7 @@
   "id": 2,
   "name": "Campus de la UNA",
   "background": "calle",
-  "bg_image": "sanlorenzo.jpg",
+  "bg_image": "san_lorenzo/stage_san_lorenzo.jpg",
   "bg_color": [100, 120, 150],
   "score_bonus": 500,
   "enemy_start_x": 950,
