@@ -89,6 +89,19 @@ class GameState:
                 self.bg_image = pygame.transform.scale(
                     self.bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
+        # Cargar música de fondo del nivel
+        music_file = self.level_data.get("music", "")
+        if music_file:
+            music_path = os.path.join(os.path.dirname(__file__), "..",
+                                      "assets", "sounds", "music", music_file)
+            if os.path.exists(music_path):
+                self.bg_music = pygame.mixer.Sound(music_path)
+                self.bg_music.set_volume(1.0)
+                self.bg_music.play(-1)
+        else:
+            if hasattr(self, 'bg_music') and self.bg_music:
+                self.bg_music.stop()
+
         self.show_level_intro = True
         self.intro_timer = 180
 
