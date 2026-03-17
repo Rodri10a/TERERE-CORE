@@ -75,12 +75,12 @@ class MinigameState:
             return
 
         if self.show_result:
-            self.result_timer -= 1
-            if self.result_timer <= 0:
-                if self.show_failed:
+            if self.show_failed:
+                self.result_timer -= 1
+                if self.result_timer <= 0:
                     self.state_manager.change_state(STATE_GAMEOVER)
-                else:
-                    self._advance_to_next_level()
+            else:
+                self._advance_to_next_level()
             return
 
         self.minigame.update()
