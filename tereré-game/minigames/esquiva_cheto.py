@@ -1,5 +1,6 @@
-"""Minijuego 2: Esquivar objetos lanzados por el cheto."""
+"""Minijuego 2: Esquivar baches en San Lorenzo."""
 
+import os
 import pygame
 import random
 from minigames.base_minigame import BaseMinigame
@@ -8,41 +9,50 @@ from core.settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, YELLOW, RED, GRAY
 from ui.text_renderer import TextRenderer
 
 
-class ChetoObject:
-    """Objeto lanzado por el cheto que el jugador debe esquivar."""
+class Bache:
+    """Bache que el jugador debe esquivar."""
 
-    TYPES = [
-        {"name": "celular", "color": (40, 40, 40), "w": 15, "h": 25},
-        {"name": "billetera", "color": (100, 60, 30), "w": 25, "h": 15},
-        {"name": "perfume", "color": (200, 100, 200), "w": 12, "h": 30},
-    ]
+    _image: pygame.Surface | None = None
+    _loaded: bool = False
+
+    @classmethod
+    def _load_image(cls) -> None:
+        if cls._loaded:
+            return
+        cls._loaded = True
+        path = os.path.join(os.path.dirname(__file__), "..",
+                            "assets", "images", "ui", "hud", "bache.png")
+        if os.path.exists(path):
+            img = pygame.image.load(path).convert_alpha()
+            cls._image = pygame.transform.scale(img, (60, 50))
 
     def __init__(self, lane: int) -> None:
-        obj_type = random.choice(self.TYPES)
+        Bache._load_image()
         self.x: float = SCREEN_WIDTH + 10
-        self.y: float = 200 + lane * 120  # 3 carriles
-        self.width: int = obj_type["w"]
-        self.height: int = obj_type["h"]
-        self.color: tuple = obj_type["color"]
-        self.name: str = obj_type["name"]
+        self.y: float = 200 + lane * 120
+        self.width: int = 60
+        self.height: int = 50
         self.speed: float = random.uniform(5, 9)
         self.active: bool = True
 
     def update(self) -> None:
         self.x -= self.speed
-        if self.x < -50:
+        if self.x < -70:
             self.active = False
 
     def get_rect(self) -> pygame.Rect:
         return pygame.Rect(int(self.x), int(self.y), self.width, self.height)
 
     def draw(self, screen: pygame.Surface) -> None:
-        pygame.draw.rect(screen, self.color, self.get_rect())
-        pygame.draw.rect(screen, WHITE, self.get_rect(), 1)
+        if Bache._image:
+            screen.blit(Bache._image, (int(self.x), int(self.y)))
+        else:
+            pygame.draw.rect(screen, (80, 50, 20), self.get_rect())
+            pygame.draw.rect(screen, WHITE, self.get_rect(), 1)
 
 
 class EsquivaCheto(BaseMinigame):
-    """Esquiva objetos del cheto moviéndote entre 3 carriles. 3 vidas."""
+    """Esquiva baches moviéndote entre 3 carriles. 3 vidas."""
 
     def __init__(self, screen: pygame.Surface, input_handler: InputHandler) -> None:
         super().__init__(screen, input_handler, duration=900)  # 15 seg
@@ -52,10 +62,17 @@ class EsquivaCheto(BaseMinigame):
         self.player_width: int = 40
         self.player_height: int = 50
         self.lives: int = 3
-        self.objects: list[ChetoObject] = []
+        self.objects: list[Bache] = []
         self.spawn_timer: int = 0
         self.dodged: int = 0
-        self.hurt_timer: int = 0 
+        self.hurt_timer: int = 0
+
+        # Sonido de "y volo"
+        self.volo_sound: pygame.mixer.Sound | None = None
+        volo_path = os.path.join(os.path.dirname(__file__), "..",
+                                 "assets", "sounds", "music", "Y_volo.wav")
+        if os.path.exists(volo_path):
+            self.volo_sound = pygame.mixer.Sound(volo_path)
 
     def _get_player_y(self) -> int:
         return 185 + self.player_lane * 120
@@ -92,15 +109,15 @@ class EsquivaCheto(BaseMinigame):
             self.score_earned = self.dodged * 30 + self.lives * 100
             return
 
-        # Spawn objetos
+        # Spawn baches
         self.spawn_timer += 1
         spawn_rate = max(20, 50 - self.timer // 100)
         if self.spawn_timer >= spawn_rate:
             lane = random.randint(0, 2)
-            self.objects.append(ChetoObject(lane))
+            self.objects.append(Bache(lane))
             self.spawn_timer = 0
 
-        # Actualizar objetos
+        # Actualizar baches
         player_rect = self._get_player_rect()
         for obj in self.objects:
             obj.update()
@@ -108,6 +125,8 @@ class EsquivaCheto(BaseMinigame):
                 obj.active = False
                 self.lives -= 1
                 self.hurt_timer = 30
+                if self.volo_sound:
+                    self.volo_sound.play()
             elif not obj.active and obj.x < 0:
                 self.dodged += 1
 
@@ -116,7 +135,7 @@ class EsquivaCheto(BaseMinigame):
     def draw(self) -> None:
         self.screen.fill((50, 40, 60))
 
-        self.text.render_title_centered(self.screen, "ESQUIVA AL CHETO", 15, 18, YELLOW)
+        self.text.render_title_centered(self.screen, "ESQUIVA LOS BACHES", 15, 18, YELLOW)
 
         # Carriles
         for i in range(3):
@@ -126,7 +145,7 @@ class EsquivaCheto(BaseMinigame):
             pygame.draw.line(self.screen, (80, 70, 90),
                              (0, lane_y), (SCREEN_WIDTH, lane_y), 1)
 
-        # Objetos
+        # Baches
         for obj in self.objects:
             obj.draw(self.screen)
 

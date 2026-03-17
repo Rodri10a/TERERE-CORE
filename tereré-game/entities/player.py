@@ -48,6 +48,13 @@ class Player(Character):
 
         self._load_sprites(character_file)
 
+        # Sonido de golpe
+        self.punch_sound: pygame.mixer.Sound | None = None
+        punch_path = os.path.join(os.path.dirname(__file__), "..",
+                                  "assets", "sounds", "sfx", "punch_1.mp3")
+        if os.path.exists(punch_path):
+            self.punch_sound = pygame.mixer.Sound(punch_path)
+
         self.combo_count: int = 0
         self.combo_timer: int = 0
         self.special_cooldown: int = 0
@@ -156,6 +163,8 @@ class Player(Character):
 
     def attack(self) -> None:
         """Ejecuta un ataque normal con sistema de combo."""
+        if self.punch_sound:
+            self.punch_sound.play()
         self.is_attacking = True
         self.attack_active_frames = 8
         self.state = "attacking"

@@ -11,6 +11,7 @@
     "health": 100,
     "damage": 10
   },
+  "music": "areko4kuña.wav",
   "minigame": "terere_rush",
   "platforms": []
 }
