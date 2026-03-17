@@ -1,5 +1,6 @@
 """Pantalla de menú principal del juego."""
 
+import os
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
                            TERERE_GREEN, STATE_NAME, YELLOW, DARK_GREEN, GRAY)
@@ -19,6 +20,17 @@ class MenuState:
         self.input_handler = input_handler
         self.text = TextRenderer()
         self.animation_timer: int = 0
+
+        # Música de portada
+        self.portada_music: pygame.mixer.Sound | None = None
+        music_path = os.path.join(os.path.dirname(__file__), "..",
+                                  "assets", "sounds", "music", "portada.mp3")
+        if os.path.exists(music_path):
+            self.portada_music = pygame.mixer.Sound(music_path)
+            self.portada_music.set_volume(0.5)
+            self.portada_music.play(-1)
+        # Guardar referencia en shared_data para que otros estados puedan pararla
+        state_manager.shared_data["portada_music"] = self.portada_music
 
         # Botones
         btn_x = SCREEN_WIDTH // 2 - 100
@@ -53,7 +65,7 @@ class MenuState:
             if self.btn_play.is_clicked(mouse_pos, True):
                 self.state_manager.shared_data["score"] = 0
                 self.state_manager.shared_data["current_level"] = 1
-                self.state_manager.shared_data["player_health"] = 100
+                self.state_manager.shared_data["player_health"] = 250
                 self.state_manager.change_state(STATE_NAME)
             elif self.btn_scores.is_clicked(mouse_pos, True):
                 self.show_scores = True

@@ -11,7 +11,7 @@ class Enemy(Character):
     """El cheto antagonista con IA básica de estados: patrullar, perseguir, atacar, retroceder."""
 
     def __init__(self, x: float, y: float, speed: float = 3.0,
-                 health: int = 100, damage: int = 10,
+                 health: int = 130, damage: int = 10,
                  sprite_folder: str = "Luqueño") -> None:
         super().__init__(x, y, 150, 250, color=(180, 50, 180), health=health,
                          speed=speed, damage=damage)

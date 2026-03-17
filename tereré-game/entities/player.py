@@ -27,7 +27,7 @@ class Player(Character):
 
     def __init__(self, x: float, y: float, input_handler: InputHandler,
                  character_file: str = "capiateno") -> None:
-        super().__init__(x, y, 150, 250, color=(60, 140, 60), health=100,
+        super().__init__(x, y, 150, 250, color=(60, 140, 60), health=250,
                          speed=PLAYER_SPEED, damage=15)
         self.input_handler = input_handler
 
@@ -70,20 +70,13 @@ class Player(Character):
         # Intentar cargar como carpeta con frames
         frames_dir = os.path.join(base, character_file)
         if os.path.isdir(frames_dir):
-            # Buscar frames en raiz o en subcarpeta "pegar"
-            pegar_dir = os.path.join(frames_dir, "pegar")
-            if os.path.isdir(pegar_dir):
-                search_dir = pegar_dir
-            else:
-                search_dir = frames_dir
-
-            frame_files = sorted([f for f in os.listdir(search_dir)
-                                   if f.startswith("frame") and f.endswith(".png")])
-            for ff in frame_files:
-                path = os.path.join(search_dir, ff)
+            # Cargar frames de ataque: punch_*.png en la carpeta del personaje
+            punch_files = sorted([f for f in os.listdir(frames_dir)
+                                   if f.startswith("punch_") and f.endswith(".png")])
+            for pf in punch_files:
+                path = os.path.join(frames_dir, pf)
                 img = pygame.image.load(path).convert_alpha()
                 img = pygame.transform.scale(img, (self.width, self.height))
-                # Todos los frames de pegar/ son de ataque
                 self.attack_frames.append(img)
                 self.attack_frames_flipped.append(pygame.transform.flip(img, True, False))
 

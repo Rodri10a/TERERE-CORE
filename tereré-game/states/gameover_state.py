@@ -40,7 +40,7 @@ class GameOverState:
             if self.btn_retry.is_clicked(mouse_pos, True):
                 self.state_manager.shared_data["score"] = 0
                 self.state_manager.shared_data["current_level"] = 1
-                self.state_manager.shared_data["player_health"] = 100
+                self.state_manager.shared_data["player_health"] = 250
                 self.state_manager.change_state(STATE_GAME)
             elif self.btn_menu.is_clicked(mouse_pos, True):
                 self.state_manager.change_state(STATE_MENU)
