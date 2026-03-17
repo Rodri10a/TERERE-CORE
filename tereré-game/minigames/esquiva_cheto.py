@@ -116,7 +116,7 @@ class EsquivaCheto(BaseMinigame):
     def draw(self) -> None:
         self.screen.fill((50, 40, 60))
 
-        self.text.render_centered(self.screen, "ESQUIVA AL CHETO!", 20, 28, YELLOW)
+        self.text.render_title_centered(self.screen, "ESQUIVA AL CHETO", 15, 18, YELLOW)
 
         # Carriles
         for i in range(3):
@@ -142,16 +142,10 @@ class EsquivaCheto(BaseMinigame):
                           self.player_width + 6, 8))
 
         # UI
-        hearts = ""
-        for i in range(3):
-            if i < self.lives:
-                hearts += "♥ "
-            else:
-                hearts += "♡ "
-        self.text.render(self.screen, f"Vidas: {hearts.strip()}",
-                         20, 70, 22, RED)
+        self.text.render(self.screen, f"Vidas: {self.lives}",
+                         20, 65, 10, RED)
         self.text.render(self.screen, f"Tiempo: {self.get_time_remaining():.0f}s",
-                         SCREEN_WIDTH - 150, 70, 22, WHITE)
+                         SCREEN_WIDTH - 160, 65, 10, WHITE)
 
-        self.text.render_centered(self.screen, "Flechas / WASD para cambiar de carril",
-                                  SCREEN_HEIGHT - 30, 16, GRAY)
+        self.text.render_centered(self.screen, "Flechas y WASD para cambiar de carril",
+                                  SCREEN_HEIGHT - 25, 10, GRAY)

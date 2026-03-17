@@ -94,8 +94,8 @@ class SelectState:
         """Dibuja la pantalla de seleccion."""
         self.screen.fill((20, 35, 20))
 
-        self.text.render_centered(self.screen, "ELIGE TU PERSONAJE",
-                                  50, 42, YELLOW)
+        self.text.render_title_centered(self.screen, "ELIGE TU PERSONAJE",
+                                        55, 24, YELLOW)
 
         # Dibujar los 3 personajes
         total = len(self.characters)
@@ -127,18 +127,18 @@ class SelectState:
             # Nombre (centrado en la carta)
             name_y = y + 275
             color = YELLOW if is_selected else WHITE
-            font = self.text._get_font(24)
+            font = self.text._get_font(12)
             name_surf = font.render(char["name"], True, color)
             name_x = x + card_w // 2 - name_surf.get_width() // 2
             self.screen.blit(name_surf, (name_x, name_y))
 
             # Descripcion (centrada en la carta)
-            desc_y = y + 310
-            font_sm = self.text._get_font(14)
+            desc_y = y + 315
+            font_sm = self.text._get_font(8)
             desc_surf = font_sm.render(char["description"], True, GRAY)
             desc_x = x + card_w // 2 - desc_surf.get_width() // 2
             self.screen.blit(desc_surf, (desc_x, desc_y))
 
         # Instrucciones
-        self.text.render_centered(self.screen, "< A / D >  para elegir   |   ENTER para confirmar",
-                                  570, 18, GRAY)
+        self.text.render_centered(self.screen, "< A - D >  para elegir     ENTER para confirmar",
+                                  570, 10, GRAY)

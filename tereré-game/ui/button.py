@@ -1,7 +1,7 @@
 """Botón clickeable para menús e interfaces."""
 
 import pygame
-from core.settings import WHITE, BLACK
+from core.settings import WHITE, BLACK, FONT_UI_BOLD_PATH
 
 
 class Button:
@@ -11,13 +11,13 @@ class Button:
                  bg_color: tuple = (80, 80, 80),
                  hover_color: tuple = (120, 120, 120),
                  text_color: tuple = WHITE,
-                 font_size: int = 24) -> None:
+                 font_size: int = 12) -> None:
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.bg_color = bg_color
         self.hover_color = hover_color
         self.text_color = text_color
-        self.font = pygame.font.Font(None, font_size)
+        self.font = pygame.font.Font(FONT_UI_BOLD_PATH, font_size)
 
     def is_clicked(self, mouse_pos: tuple, mouse_click: bool) -> bool:
         """Retorna True si el botón fue clickeado."""

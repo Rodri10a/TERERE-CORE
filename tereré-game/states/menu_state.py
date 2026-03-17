@@ -81,14 +81,14 @@ class MenuState:
 
         # Título
         bounce = abs((self.animation_timer % 60) - 30) / 30.0 * 5
-        self.text.render_centered(self.screen, "TERERE CORE",
-                                  int(80 + bounce), 52, YELLOW)
-        self.text.render_centered(self.screen, "TERERE CORE",
-                                  int(82 + bounce), 50, TERERE_GREEN)
+        self.text.render_title_centered(self.screen, "TERERE CORE",
+                                        int(78 + bounce), 32, YELLOW)
+        self.text.render_title_centered(self.screen, "TERERE CORE",
+                                        int(82 + bounce), 32, TERERE_GREEN)
 
         # Subtítulo
         self.text.render_centered(self.screen, "La venganza del capiateno",
-                                  150, 22, WHITE)
+                                  130, 12, WHITE)
 
         # Historia
         story_lines = [
@@ -96,13 +96,13 @@ class MenuState:
             "de unos capiatenos en la plaza...",
             "",
             "Recupera tu terere enfrentando al cheto",
-            "en peleas epicas y minijuegos!",
+            "en peleas epicas y minijuegos",
         ]
-        y = 200
+        y = 175
         for line in story_lines:
             if line:
-                self.text.render_centered(self.screen, line, y, 18, (200, 220, 200))
-            y += 25
+                self.text.render_centered(self.screen, line, y, 10, (200, 220, 200))
+            y += 20
 
         # Botones
         mouse_pos = pygame.mouse.get_pos()
@@ -111,20 +111,20 @@ class MenuState:
         self.btn_quit.draw(self.screen, mouse_pos)
 
         # Controles
-        self.text.render_centered(self.screen, "Flechas/A D: Mover | ESPACIO/W: Saltar | ENTER: Atacar | J: Especial",
-                                  570, 14, GRAY)
+        self.text.render_centered(self.screen, "A-D: Mover  ESPACIO-W: Saltar  ENTER: Atacar  J: Especial",
+                                  570, 8, GRAY)
 
     def _draw_scores(self) -> None:
         """Dibuja la pantalla de highscores."""
-        self.text.render_centered(self.screen, "HIGHSCORES", 60, 40, YELLOW)
+        self.text.render_title_centered(self.screen, "HIGHSCORES", 60, 24, YELLOW)
 
         if not self.highscores:
-            self.text.render_centered(self.screen, "No hay puntajes aun", 200, 24, GRAY)
+            self.text.render_centered(self.screen, "No hay puntajes aun", 200, 12, GRAY)
         else:
             for i, entry in enumerate(self.highscores[:5]):
                 name = entry.get("name", "???")
                 score = entry.get("score", 0)
                 text = f"{i + 1}. {name} - {score}"
-                self.text.render_centered(self.screen, text, 150 + i * 40, 24, WHITE)
+                self.text.render_centered(self.screen, text, 160 + i * 45, 12, WHITE)
 
-        self.text.render_centered(self.screen, "Click para volver", 500, 20, GRAY)
+        self.text.render_centered(self.screen, "Click para volver", 500, 10, GRAY)

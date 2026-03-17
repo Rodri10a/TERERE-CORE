@@ -38,10 +38,10 @@ class StoryState:
         self.screen.fill((15, 30, 15))
 
         # Titulo
-        self.text.render_centered(self.screen, "TERERE CORE",
-                                  60, 48, YELLOW)
+        self.text.render_title_centered(self.screen, "TERERE CORE",
+                                        60, 32, YELLOW)
         self.text.render_centered(self.screen, "La venganza del capiateno",
-                                  120, 24, TERERE_GREEN)
+                                  110, 12, TERERE_GREEN)
 
         # Linea decorativa
         line_y = 160
@@ -56,28 +56,28 @@ class StoryState:
             "en la plaza de Capiata...",
             "",
             "De repente, un cheto de Asuncion aparecio",
-            "con su auto importado y les robo el terere!",
+            "con su auto importado y les robo el terere",
             "",
             "Ahora {name} debe recorrer todo el pais",
             "desde Capiata hasta Villarrica,",
             "enfrentando al cheto en peleas epicas",
             "y superando minijuegos para recuperar",
-            "su preciado terere!",
+            "su preciado terere",
         ]
 
-        y = 200
+        y = 185
         for i, line in enumerate(story):
             # Aparicion gradual: cada linea aparece 15 frames despues de la anterior
             if self.timer > i * 15:
                 line = line.replace("{name}", self.player_name)
                 if line:
                     color = (200, 220, 200) if line[0] != " " else GRAY
-                    self.text.render_centered(self.screen, line, y, 20, color)
-            y += 30
+                    self.text.render_centered(self.screen, line, y, 10, color)
+            y += 20
 
         # Instruccion para continuar (aparece despues de toda la historia)
         if self.timer > len(story) * 15 + 30:
             flash = (self.timer // 30) % 2 == 0
             if flash:
-                self.text.render_centered(self.screen, "Presiona ENTER para comenzar la aventura!",
-                                          620, 20, TERERE_GREEN)
+                self.text.render_centered(self.screen, "Presiona ENTER para comenzar la aventura",
+                                          610, 10, TERERE_GREEN)
