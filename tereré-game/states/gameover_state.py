@@ -1,5 +1,6 @@
 """Pantalla de Game Over."""
 
+import os
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_MENU, STATE_GAME,
                            WHITE, RED, YELLOW, GRAY)
@@ -20,6 +21,14 @@ class GameOverState:
         self.input_handler = input_handler
         self.text = TextRenderer()
         self.final_score: int = state_manager.shared_data.get("score", 0)
+
+        # Imagen de fondo
+        self.bg_image: pygame.Surface | None = None
+        bg_path = os.path.join(os.path.dirname(__file__), "..",
+                               "assets", "images", "backgrounds", "gameover.jpg")
+        if os.path.exists(bg_path):
+            img = pygame.image.load(bg_path).convert()
+            self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         # Guardar highscore
         self.score_system = ScoreSystem()
@@ -51,7 +60,13 @@ class GameOverState:
 
     def draw(self) -> None:
         """Dibuja la pantalla de game over."""
-        self.screen.fill((40, 15, 15))
+        if self.bg_image:
+            self.screen.blit(self.bg_image, (0, 0))
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 120))
+            self.screen.blit(overlay, (0, 0))
+        else:
+            self.screen.fill((40, 15, 15))
 
         # Título con shake
         shake_x = 0

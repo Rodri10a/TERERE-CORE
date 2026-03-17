@@ -52,14 +52,15 @@ class GameState:
         self.show_level_intro: bool = True
         self.intro_timer: int = 180  # 3 segundos
 
-        # Música de pelea (areko4kuña)
+        # Música de pelea por nivel
         self.fight_music: pygame.mixer.Sound | None = None
-        fight_music_path = os.path.join(os.path.dirname(__file__), "..",
-                                        "assets", "sounds", "music", "areko4kuña.wav")
-        if os.path.exists(fight_music_path):
-            self.fight_music = pygame.mixer.Sound(fight_music_path)
-            self.fight_music.set_volume(0.5)
         self.fight_music_playing: bool = False
+        self.level_music = {
+            1: "areko4kuña.wav",
+            2: "areko4kuña.wav",
+            3: "luque.pelea.wav",
+            4: "areko4kuña.wav",
+        }
 
         # Parar música de portada al entrar a la pelea
         portada_music = state_manager.shared_data.get("portada_music")
@@ -104,10 +105,16 @@ class GameState:
                 self.bg_image = pygame.transform.scale(
                     self.bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        # Parar música anterior si existía
-        if hasattr(self, 'bg_music') and self.bg_music:
-            self.bg_music.stop()
-        self.bg_music = None
+        # Cargar música de pelea del nivel
+        self._stop_fight_music()
+        music_file = self.level_music.get(level_number, "areko4kuña.wav")
+        music_path = os.path.join(os.path.dirname(__file__), "..",
+                                  "assets", "sounds", "music", music_file)
+        if os.path.exists(music_path):
+            self.fight_music = pygame.mixer.Sound(music_path)
+            self.fight_music.set_volume(0.5)
+        else:
+            self.fight_music = None
 
         self.show_level_intro = True
         self.intro_timer = 180
