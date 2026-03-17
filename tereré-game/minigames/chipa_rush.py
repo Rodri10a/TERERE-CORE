@@ -129,11 +129,18 @@ class ChipaRush(BaseMinigame):
         self.move_left_limit: int = int(SCREEN_WIDTH * 0.18)
         self.move_right_limit: int = int(SCREEN_WIDTH * 0.82)
 
-        # Canasta
-        self.basket_x: float = SCREEN_WIDTH // 2 - 40
-        self.basket_y: int = SCREEN_HEIGHT - 80
-        self.basket_width: int = 80
-        self.basket_height: int = 30
+        # Personaje (vacabolt_2)
+        self.basket_image: pygame.Surface | None = None
+        vaca_path = os.path.join(os.path.dirname(__file__), "..",
+                                 "assets", "images", "ui", "vacabolt_2.png")
+        if os.path.exists(vaca_path):
+            img = pygame.image.load(vaca_path).convert_alpha()
+            self.basket_image = pygame.transform.scale(img, (70, 80))
+
+        self.basket_x: float = SCREEN_WIDTH // 2 - 35
+        self.basket_y: int = SCREEN_HEIGHT - 100
+        self.basket_width: int = 70
+        self.basket_height: int = 80
         self.basket_speed: float = 7.0
 
         self.chipas: list[FallingChipa] = []
@@ -301,11 +308,14 @@ class ChipaRush(BaseMinigame):
         for c in self.chipas:
             c.draw(self.screen)
 
-        # Canasta
-        basket_rect = pygame.Rect(int(self.basket_x), self.basket_y,
-                                  self.basket_width, self.basket_height)
-        pygame.draw.rect(self.screen, (180, 130, 60), basket_rect)
-        pygame.draw.rect(self.screen, (140, 100, 40), basket_rect, 3)
+        # Personaje
+        if self.basket_image:
+            self.screen.blit(self.basket_image, (int(self.basket_x), self.basket_y))
+        else:
+            basket_rect = pygame.Rect(int(self.basket_x), self.basket_y,
+                                      self.basket_width, self.basket_height)
+            pygame.draw.rect(self.screen, (180, 130, 60), basket_rect)
+            pygame.draw.rect(self.screen, (140, 100, 40), basket_rect, 3)
 
         # HUD
         self.text.render_title_centered(self.screen, "CHIPA RUSH", 15, 20, YELLOW)
