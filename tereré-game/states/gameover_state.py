@@ -59,16 +59,16 @@ class GameOverState:
             import random
             shake_x = random.randint(-3, 3)
 
-        self.text.render_centered(self.screen, "GAME OVER", 120 + shake_x, 52, RED)
+        self.text.render_title_centered(self.screen, "GAME OVER", 100 + shake_x, 32, RED)
 
         self.text.render_centered(self.screen, "El cheto se escapo con tu terere...",
-                                  200, 22, (200, 180, 180))
+                                  180, 12, (200, 180, 180))
 
         self.text.render_centered(self.screen, f"Puntaje final: {self.final_score}",
-                                  270, 32, YELLOW)
+                                  240, 16, YELLOW)
 
         if self.is_highscore:
-            self.text.render_centered(self.screen, "NUEVO HIGHSCORE!", 320, 24, (255, 215, 0))
+            self.text.render_centered(self.screen, "NUEVO HIGHSCORE", 290, 14, (255, 215, 0))
 
         mouse_pos = pygame.mouse.get_pos()
         self.btn_retry.draw(self.screen, mouse_pos)

@@ -64,7 +64,7 @@ class YuyosQuiz(BaseMinigame):
         self.buttons = []
         btn_x = SCREEN_WIDTH // 2 - 120
         for i, option in enumerate(q["options"]):
-            btn = Button(btn_x, 320 + i * 70, 240, 50, option,
+            btn = Button(btn_x, 270 + i * 60, 240, 48, option,
                          bg_color=(60, 100, 60), hover_color=(80, 140, 80))
             self.buttons.append(btn)
         self.question_timer = 600
@@ -81,9 +81,9 @@ class YuyosQuiz(BaseMinigame):
                     self.answered = True
                     if q["options"][i] == q["correct"]:
                         self.correct_answers += 1
-                        self.answer_result = "CORRECTO!"
+                        self.answer_result = "CORRECTO"
                     else:
-                        self.answer_result = f"Incorrecto! Era: {q['correct']}"
+                        self.answer_result = f"Incorrecto. Era: {q['correct']}"
                     self.answer_timer = 90
                     break
 
@@ -108,21 +108,21 @@ class YuyosQuiz(BaseMinigame):
         if self.question_timer <= 0:
             self.answered = True
             q = self.questions[self.current_question]
-            self.answer_result = f"Tiempo! Era: {q['correct']}"
+            self.answer_result = f"Tiempo. Era: {q['correct']}"
             self.answer_timer = 90
 
     def draw(self) -> None:
         self.screen.fill((40, 50, 30))
 
-        self.text.render_centered(self.screen, "QUIZ DE YUYOS", 20, 30, YELLOW)
+        self.text.render_title_centered(self.screen, "QUIZ DE YUYOS", 15, 20, YELLOW)
         self.text.render(self.screen,
-                         f"Pregunta {self.current_question + 1}/{self.total_questions}",
-                         20, 65, 20, WHITE)
+                         f"Pregunta {self.current_question + 1} de {self.total_questions}",
+                         20, 65, 10, WHITE)
 
         if self.completed:
             self.text.render_centered(self.screen,
-                                      f"Resultado: {self.correct_answers}/{self.total_questions}",
-                                      250, 36, TERERE_GREEN)
+                                      f"Resultado: {self.correct_answers} de {self.total_questions}",
+                                      250, 14, TERERE_GREEN)
             return
 
         q = self.questions[self.current_question]
@@ -131,15 +131,15 @@ class YuyosQuiz(BaseMinigame):
         time_left = self.question_timer / 60.0
         timer_color = WHITE if time_left > 3 else RED
         self.text.render(self.screen, f"Tiempo: {time_left:.0f}s",
-                         SCREEN_WIDTH - 150, 65, 20, timer_color)
+                         SCREEN_WIDTH - 160, 65, 10, timer_color)
 
         # Pregunta
-        self.text.render_centered(self.screen, "Que yuyo es este?", 120, 24, TERERE_GREEN)
-        self.text.render_centered(self.screen, f'"{q["description"]}"', 170, 20, WHITE)
+        self.text.render_centered(self.screen, "Que yuyo es este?", 120, 14, TERERE_GREEN)
+        self.text.render_centered(self.screen, f'"{q["description"]}"', 155, 10, WHITE)
 
         if self.answered:
             color = GREEN if "CORRECTO" in self.answer_result else RED
-            self.text.render_centered(self.screen, self.answer_result, 250, 28, color)
+            self.text.render_centered(self.screen, self.answer_result, 240, 12, color)
         else:
             mouse_pos = pygame.mouse.get_pos()
             for btn in self.buttons:

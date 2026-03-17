@@ -106,7 +106,7 @@ class MinigameState:
         overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 160))
         self.screen.blit(overlay, (0, 0))
-        self.text.render_centered(self.screen, "PAUSA", 130, 48, WHITE)
+        self.text.render_title_centered(self.screen, "PAUSA", 130, 28, WHITE)
         if self.show_instructions:
             self._draw_pause_instructions()
             return
@@ -116,7 +116,7 @@ class MinigameState:
 
     def _draw_pause_instructions(self) -> None:
         """Dibuja los controles del minijuego activo."""
-        self.text.render_centered(self.screen, "CONTROLES", 185, 26, TERERE_GREEN)
+        self.text.render_centered(self.screen, "CONTROLES", 185, 14, TERERE_GREEN)
         instructions = {
             "terere_rush":   [("Mover canasta", "Flechas  /  A  D")],
             "esquiva_cheto": [("Cambiar carril", "Flechas  /  W  S")],
@@ -124,12 +124,12 @@ class MinigameState:
         }
         lines = instructions.get(self.minigame_id, [])
         lines.append(("Pausar", "Escape"))
-        y = 250
+        y = 230
         for action, keys in lines:
-            self.text.render(self.screen, action, 200, y, 20, WHITE)
-            self.text.render(self.screen, keys, 440, y, 20, TERERE_GREEN)
-            y += 40
-        self.text.render_centered(self.screen, "Escape para volver", 450, 16, (150, 150, 150))
+            self.text.render(self.screen, action, 200, y, 10, WHITE)
+            self.text.render(self.screen, keys, 430, y, 10, TERERE_GREEN)
+            y += 32
+        self.text.render_centered(self.screen, "Escape para volver", 450, 10, (150, 150, 150))
 
     def _advance_to_next_level(self) -> None:
         """Avanza al siguiente nivel de pelea."""
@@ -142,24 +142,24 @@ class MinigameState:
         if self.show_result:
             if self.show_failed:
                 self.screen.fill((50, 20, 20))
-                self.text.render_centered(self.screen, "PERDISTE!",
-                                          180, 36, RED)
+                self.text.render_title_centered(self.screen, "PERDISTE",
+                                               160, 28, RED)
                 self.text.render_centered(self.screen, "Te quedaste sin vidas...",
-                                          260, 28, WHITE)
+                                          230, 14, WHITE)
                 self.text.render_centered(self.screen,
                                           f"Puntaje final: {self.state_manager.shared_data['score']}",
-                                          310, 22, TERERE_GREEN)
+                                          275, 12, TERERE_GREEN)
             else:
                 self.screen.fill((20, 40, 20))
-                self.text.render_centered(self.screen, "MINIJUEGO COMPLETADO!",
-                                          180, 36, YELLOW)
+                self.text.render_title_centered(self.screen, "MINIJUEGO COMPLETADO",
+                                               160, 22, YELLOW)
                 self.text.render_centered(self.screen, f"Puntos ganados: {self.minigame.score_earned}",
-                                          260, 28, WHITE)
+                                          230, 14, WHITE)
                 self.text.render_centered(self.screen,
                                           f"Puntaje total: {self.state_manager.shared_data['score']}",
-                                          310, 22, TERERE_GREEN)
+                                          275, 12, TERERE_GREEN)
                 self.text.render_centered(self.screen, "Preparate para el siguiente nivel...",
-                                          400, 20, (180, 180, 180))
+                                          360, 10, (180, 180, 180))
         else:
             self.minigame.draw()
 
