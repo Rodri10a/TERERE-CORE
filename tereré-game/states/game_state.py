@@ -52,6 +52,21 @@ class GameState:
         self.show_level_intro: bool = True
         self.intro_timer: int = 180  # 3 segundos
 
+        # Música de pelea (areko4kuña)
+        self.fight_music: pygame.mixer.Sound | None = None
+        fight_music_path = os.path.join(os.path.dirname(__file__), "..",
+                                        "assets", "sounds", "music", "areko4kuña.wav")
+        if os.path.exists(fight_music_path):
+            self.fight_music = pygame.mixer.Sound(fight_music_path)
+            self.fight_music.set_volume(0.5)
+        self.fight_music_playing: bool = False
+
+        # Parar música de portada al entrar a la pelea
+        portada_music = state_manager.shared_data.get("portada_music")
+        if portada_music:
+            portada_music.stop()
+            state_manager.shared_data["portada_music"] = None
+
         self.player: Player = Player(200, GROUND_Y - 250, input_handler, self.character_file)
         self.enemy: Enemy = Enemy(900, GROUND_Y - 100)
 
@@ -74,7 +89,7 @@ class GameState:
                            health=enemy_health, damage=enemy_damage)
 
         # Restaurar vida del jugador
-        player_health = self.state_manager.shared_data.get("player_health", 100)
+        player_health = self.state_manager.shared_data.get("player_health", 250)
         self.player = Player(200, GROUND_Y - 250, self.input_handler, self.character_file)
         self.player.health = player_health
 
@@ -89,18 +104,10 @@ class GameState:
                 self.bg_image = pygame.transform.scale(
                     self.bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        # Cargar música de fondo del nivel
-        music_file = self.level_data.get("music", "")
-        if music_file:
-            music_path = os.path.join(os.path.dirname(__file__), "..",
-                                      "assets", "sounds", "music", music_file)
-            if os.path.exists(music_path):
-                self.bg_music = pygame.mixer.Sound(music_path)
-                self.bg_music.set_volume(1.0)
-                self.bg_music.play(-1)
-        else:
-            if hasattr(self, 'bg_music') and self.bg_music:
-                self.bg_music.stop()
+        # Parar música anterior si existía
+        if hasattr(self, 'bg_music') and self.bg_music:
+            self.bg_music.stop()
+        self.bg_music = None
 
         self.show_level_intro = True
         self.intro_timer = 180
@@ -113,6 +120,10 @@ class GameState:
 
         if self.show_level_intro and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             self.show_level_intro = False
+            # Iniciar música de pelea
+            if self.fight_music and not self.fight_music_playing:
+                self.fight_music.play(-1)
+                self.fight_music_playing = True
             return
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -176,8 +187,15 @@ class GameState:
         elif not self.player.is_alive():
             self._on_player_defeated()
 
+    def _stop_fight_music(self) -> None:
+        """Detiene la música de pelea."""
+        if self.fight_music and self.fight_music_playing:
+            self.fight_music.stop()
+            self.fight_music_playing = False
+
     def _on_enemy_defeated(self) -> None:
         """El jugador ganó la pelea del nivel."""
+        self._stop_fight_music()
         score_bonus = self.level_data.get("score_bonus", 500)
         self.score_system.add_points(score_bonus)
         self.state_manager.shared_data["score"] = self.score_system.score
@@ -192,6 +210,7 @@ class GameState:
 
     def _on_player_defeated(self) -> None:
         """El jugador perdió."""
+        self._stop_fight_music()
         self.state_manager.shared_data["score"] = self.score_system.score
         self.state_manager.change_state(STATE_GAMEOVER)
 

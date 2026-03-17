@@ -19,7 +19,7 @@ class StateManager:
         self.shared_data: dict[str, Any] = {
             "score": 0,
             "current_level": 1,
-            "player_health": 100,
+            "player_health": 250,
         }
         self.should_quit: bool = False
         self._states: dict[str, Any] = {}

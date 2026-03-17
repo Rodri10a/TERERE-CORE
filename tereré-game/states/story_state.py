@@ -1,5 +1,6 @@
 """Pantalla de historia del juego."""
 
+import os
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK,
                            TERERE_GREEN, YELLOW, GRAY, STATE_GAME, DARK_GREEN)
@@ -20,6 +21,14 @@ class StoryState:
         self.timer: int = 0
         self.player_name: str = state_manager.shared_data.get("player_name", "Jugador")
 
+        # Imagen de fondo (antesjuego)
+        self.bg_image: pygame.Surface | None = None
+        bg_path = os.path.join(os.path.dirname(__file__), "..",
+                               "assets", "images", "backgrounds", "antesjuego.png")
+        if os.path.exists(bg_path):
+            img = pygame.image.load(bg_path).convert()
+            self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
     def handle_events(self, event: pygame.event.Event) -> None:
         """Avanza con ENTER o click."""
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -35,49 +44,23 @@ class StoryState:
 
     def draw(self) -> None:
         """Dibuja la pantalla de historia."""
-        self.screen.fill((15, 30, 15))
+        if self.bg_image:
+            self.screen.blit(self.bg_image, (0, 0))
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 140))
+            self.screen.blit(overlay, (0, 0))
+        else:
+            self.screen.fill((15, 30, 15))
 
         # Titulo
         self.text.render_title_centered(self.screen, "TERERE CORE",
                                         60, 32, YELLOW)
         self.text.render_centered(self.screen, "La venganza del capiateno",
-                                  110, 12, TERERE_GREEN)
+                                  115, 14, (255, 200, 100))
 
-        # Linea decorativa
-        line_y = 160
-        pygame.draw.line(self.screen, TERERE_GREEN,
-                         (SCREEN_WIDTH // 2 - 200, line_y),
-                         (SCREEN_WIDTH // 2 + 200, line_y), 2)
-
-        # Historia con aparicion gradual
-        story = [
-            f"{self.player_name} es un capiateno que estaba",
-            "tranquilamente tomando terere con sus amigos",
-            "en la plaza de Capiata...",
-            "",
-            "De repente, un cheto de Asuncion aparecio",
-            "con su auto importado y les robo el terere",
-            "",
-            "Ahora {name} debe recorrer todo el pais",
-            "desde Capiata hasta Villarrica,",
-            "enfrentando al cheto en peleas epicas",
-            "y superando minijuegos para recuperar",
-            "su preciado terere",
-        ]
-
-        y = 185
-        for i, line in enumerate(story):
-            # Aparicion gradual: cada linea aparece 15 frames despues de la anterior
-            if self.timer > i * 15:
-                line = line.replace("{name}", self.player_name)
-                if line:
-                    color = (200, 220, 200) if line[0] != " " else GRAY
-                    self.text.render_centered(self.screen, line, y, 10, color)
-            y += 20
-
-        # Instruccion para continuar (aparece despues de toda la historia)
-        if self.timer > len(story) * 15 + 30:
+        # Presiona ENTER
+        if self.timer > 60:
             flash = (self.timer // 30) % 2 == 0
             if flash:
-                self.text.render_centered(self.screen, "Presiona ENTER para comenzar la aventura",
-                                          610, 10, TERERE_GREEN)
+                self.text.render_centered(self.screen, "Presiona ENTER para comenzar",
+                                          SCREEN_HEIGHT - 40, 10, (255, 220, 130))

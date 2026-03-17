@@ -6,6 +6,7 @@ from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_GAME, STATE_MENU,
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from minigames.terere_rush import TerereRush
+from minigames.chipa_rush import ChipaRush
 from minigames.esquiva_cheto import EsquivaCheto
 from minigames.yuyos_quiz import YuyosQuiz
 from ui.text_renderer import TextRenderer
@@ -14,6 +15,7 @@ from ui.button import Button
 
 MINIGAME_MAP = {
     "terere_rush": TerereRush,
+    "chipa_rush": ChipaRush,
     "esquiva_cheto": EsquivaCheto,
     "yuyos_quiz": YuyosQuiz,
 }
@@ -119,6 +121,7 @@ class MinigameState:
         self.text.render_centered(self.screen, "CONTROLES", 185, 14, TERERE_GREEN)
         instructions = {
             "terere_rush":   [("Mover canasta", "Flechas  /  A  D")],
+            "chipa_rush":    [("Mover canasta", "Flechas  /  A  D")],
             "esquiva_cheto": [("Cambiar carril", "Flechas  /  W  S")],
             "yuyos_quiz":    [("Seleccionar",    "Click izquierdo")],
         }
