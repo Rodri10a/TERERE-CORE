@@ -43,8 +43,8 @@ class NameState:
         """Dibuja la pantalla de ingreso de nombre."""
         self.screen.fill((20, 40, 20))
 
-        self.text.render_centered(self.screen, "INGRESA TU NOMBRE",
-                                  150, 42, TERERE_GREEN)
+        self.text.render_title_centered(self.screen, "INGRESA TU NOMBRE",
+                                        150, 20, TERERE_GREEN)
 
         # Caja de texto
         box_w, box_h = 400, 60
@@ -54,12 +54,12 @@ class NameState:
         pygame.draw.rect(self.screen, TERERE_GREEN, (box_x, box_y, box_w, box_h), 3)
 
         # Texto ingresado + cursor parpadeante
-        cursor = "|" if (self.cursor_timer // 30) % 2 == 0 else ""
+        cursor = "_" if (self.cursor_timer // 30) % 2 == 0 else ""
         display_text = self.player_name + cursor
-        self.text.render_centered(self.screen, display_text, box_y + 18, 28, WHITE)
+        self.text.render_centered(self.screen, display_text, box_y + 18, 16, WHITE)
 
         # Instrucciones
         self.text.render_centered(self.screen, "Presiona ENTER para continuar",
-                                  420, 18, GRAY)
+                                  430, 10, GRAY)
         self.text.render_centered(self.screen, "ESC para volver al menu",
-                                  450, 14, (100, 100, 100))
+                                  455, 10, (100, 100, 100))

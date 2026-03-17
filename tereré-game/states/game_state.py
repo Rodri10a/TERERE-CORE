@@ -215,7 +215,7 @@ class GameState:
                       self.score_system.score, self.current_level, self.player_name)
 
         # Nombre del nivel (sutil, debajo del HUD)
-        self.text.render_centered(self.screen, self.level_name, 58, 13, (160, 160, 160))
+        self.text.render_centered(self.screen, self.level_name, 58, 8, (160, 160, 160))
 
         if self.paused:
             self._draw_pause_menu()
@@ -269,7 +269,7 @@ class GameState:
         overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 160))
         self.screen.blit(overlay, (0, 0))
-        self.text.render_centered(self.screen, "PAUSA", 130, 48, WHITE)
+        self.text.render_title_centered(self.screen, "PAUSA", 130, 28, WHITE)
         if self.show_instructions:
             self._draw_pause_instructions()
             return
@@ -279,7 +279,7 @@ class GameState:
 
     def _draw_pause_instructions(self) -> None:
         """Dibuja los controles del juego."""
-        self.text.render_centered(self.screen, "CONTROLES", 185, 26, TERERE_GREEN)
+        self.text.render_centered(self.screen, "CONTROLES", 185, 14, TERERE_GREEN)
         lines = [
             ("Mover",            "Flechas  /  A  D"),
             ("Saltar",           "Espacio  /  W"),
@@ -288,12 +288,12 @@ class GameState:
             ("Pausar",           "Escape"),
             ("Saltar nivel",     "P"),
         ]
-        y = 230
+        y = 225
         for action, keys in lines:
-            self.text.render(self.screen, action, 200, y, 20, WHITE)
-            self.text.render(self.screen, keys, 440, y, 20, TERERE_GREEN)
-            y += 35
-        self.text.render_centered(self.screen, "Escape para volver", 450, 16, (150, 150, 150))
+            self.text.render(self.screen, action, 200, y, 10, WHITE)
+            self.text.render(self.screen, keys, 430, y, 10, TERERE_GREEN)
+            y += 28
+        self.text.render_centered(self.screen, "Escape para volver", 450, 10, (150, 150, 150))
 
     def _draw_platforms(self) -> None:
         """Dibuja las plataformas elevadas del nivel con colores temáticos."""
@@ -324,7 +324,7 @@ class GameState:
         overlay.fill((0, 0, 0, 150))
         self.screen.blit(overlay, (0, 0))
 
-        self.text.render_centered(self.screen, f"NIVEL {self.current_level}", 200, 48, WHITE)
-        self.text.render_centered(self.screen, self.level_name, 270, 28, TERERE_GREEN)
-        self.text.render_centered(self.screen, "Preparate para la pelea!", 340, 20, (200, 200, 200))
-        self.text.render_centered(self.screen, "Presiona ENTER para comenzar", 420, 18, (150, 150, 150))
+        self.text.render_title_centered(self.screen, f"NIVEL {self.current_level}", 200, 28, WHITE)
+        self.text.render_centered(self.screen, self.level_name, 250, 14, TERERE_GREEN)
+        self.text.render_centered(self.screen, "Preparate para la pelea", 300, 12, (200, 200, 200))
+        self.text.render_centered(self.screen, "Presiona ENTER para comenzar", 370, 10, (150, 150, 150))
