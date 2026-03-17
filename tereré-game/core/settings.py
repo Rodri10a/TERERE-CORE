@@ -41,7 +41,7 @@ STATE_GAMEOVER: str = "gameover"
 STATE_VICTORY: str = "victory"
 
 # Combate
-ATTACK_COOLDOWN: int = 20
+ATTACK_COOLDOWN: int = 40
 SPECIAL_COOLDOWN: int = 60
 COMBO_WINDOW: int = 30
 KNOCKBACK_FORCE: float = 8.0
