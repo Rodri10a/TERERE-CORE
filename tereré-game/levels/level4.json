@@ -11,6 +11,7 @@
     "health": 250,
     "damage": 25
   },
+  "music":"Hamaca paraguaya peela Asun WAV.wav",
   "minigame": null,
   "platforms": []
 }

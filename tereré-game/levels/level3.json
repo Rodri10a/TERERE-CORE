@@ -11,6 +11,7 @@
     "health": 180,
     "damage": 18
   },
+  "music":"stage_luque.mp3",
   "minigame": "terere_rush",
   "platforms": []
 }

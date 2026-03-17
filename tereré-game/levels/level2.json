@@ -11,6 +11,7 @@
     "health": 150,
     "damage": 15
   },
+  "music":"Kemil Yambay pelea de sanlo.wav",
   "minigame": "esquiva_cheto",
   "platforms": []
 }
