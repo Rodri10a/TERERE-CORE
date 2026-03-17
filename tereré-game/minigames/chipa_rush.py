@@ -153,6 +153,15 @@ class ChipaRush(BaseMinigame):
         self.plane_spawn_interval: int = 240  # cada 4 seg
         self.next_direction: int = 1
 
+        # Audio chipa barrero
+        self.chipa_sound: pygame.mixer.Sound | None = None
+        sound_path = os.path.join(os.path.dirname(__file__), "..",
+                                  "assets", "sounds", "music", "Chipa_Barreeero.wav")
+        if os.path.exists(sound_path):
+            self.chipa_sound = pygame.mixer.Sound(sound_path)
+            self.chipa_sound.set_volume(0.6)
+            self.chipa_sound.play(-1)
+
         # Intro de 2 segundos
         self.intro_timer: int = 120
         self.showing_intro: bool = True
@@ -181,6 +190,8 @@ class ChipaRush(BaseMinigame):
             if self.victory_timer <= 0:
                 self.completed = True
                 self.score_earned = self.caught * 60
+                if self.chipa_sound:
+                    self.chipa_sound.stop()
             return
 
         self.timer -= 1
@@ -196,6 +207,8 @@ class ChipaRush(BaseMinigame):
             self.completed = True
             self.failed = True
             self.score_earned = self.caught * 30
+            if self.chipa_sound:
+                self.chipa_sound.stop()
             return
 
         # Mover canasta (solo en la zona amarilla del camino)

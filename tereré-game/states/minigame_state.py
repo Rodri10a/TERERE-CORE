@@ -9,6 +9,7 @@ from minigames.terere_rush import TerereRush
 from minigames.chipa_rush import ChipaRush
 from minigames.esquiva_cheto import EsquivaCheto
 from minigames.yuyos_quiz import YuyosQuiz
+from minigames.machete_rush import MacheteRush
 from ui.text_renderer import TextRenderer
 from ui.button import Button
 
@@ -18,6 +19,7 @@ MINIGAME_MAP = {
     "chipa_rush": ChipaRush,
     "esquiva_cheto": EsquivaCheto,
     "yuyos_quiz": YuyosQuiz,
+    "machete_rush": MacheteRush,
 }
 
 
@@ -124,6 +126,7 @@ class MinigameState:
             "chipa_rush":    [("Mover canasta", "Flechas  /  A  D")],
             "esquiva_cheto": [("Cambiar carril", "Flechas  /  W  S")],
             "yuyos_quiz":    [("Seleccionar",    "Click izquierdo")],
+            "machete_rush":  [("Mover canasta", "Flechas  /  A  D")],
         }
         lines = instructions.get(self.minigame_id, [])
         lines.append(("Pausar", "Escape"))
