@@ -1,8 +1,7 @@
 """HUD (Heads-Up Display) para el modo de pelea."""
 
-import os
 import pygame
-from core.settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK, RED, GREEN, YELLOW
+from core.settings import SCREEN_WIDTH, WHITE, BLACK, RED, GREEN, YELLOW
 from ui.text_renderer import TextRenderer
 
 
@@ -11,14 +10,6 @@ class HUD:
 
     def __init__(self) -> None:
         self.text = TextRenderer()
-
-        # Imagen del HUD
-        self.hud_image: pygame.Surface | None = None
-        hud_path = os.path.join(os.path.dirname(__file__), "..",
-                                "assets", "images", "ui", "hud", "HUD.png")
-        if os.path.exists(hud_path):
-            img = pygame.image.load(hud_path).convert_alpha()
-            self.hud_image = pygame.transform.scale(img, (SCREEN_WIDTH, 80))
 
     def _draw_health_bar(self, screen: pygame.Surface, x: int, y: int,
                          width: int, height: int, health: int,
@@ -63,13 +54,10 @@ class HUD:
     def draw(self, screen: pygame.Surface, player, enemy,
              score: int, level: int, player_name: str = "CAPIATEÑO") -> None:
         """Dibuja el HUD completo."""
-        # Fondo del HUD
-        if self.hud_image:
-            screen.blit(self.hud_image, (0, 0))
-        else:
-            hud_bg = pygame.Surface((SCREEN_WIDTH, 60), pygame.SRCALPHA)
-            hud_bg.fill((0, 0, 0, 140))
-            screen.blit(hud_bg, (0, 0))
+        # Fondo semitransparente del HUD
+        hud_bg = pygame.Surface((SCREEN_WIDTH, 60), pygame.SRCALPHA)
+        hud_bg.fill((0, 0, 0, 140))
+        screen.blit(hud_bg, (0, 0))
 
         # Barra de vida del jugador (izquierda)
         self._draw_health_bar(screen, 20, 8, 250, 24,

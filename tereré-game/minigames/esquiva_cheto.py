@@ -67,10 +67,18 @@ class EsquivaCheto(BaseMinigame):
             img = pygame.image.load(bg_path).convert()
             self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
+        # Imagen del jugador (vacabolt)
+        self.player_image: pygame.Surface | None = None
+        vaca_path = os.path.join(os.path.dirname(__file__), "..",
+                                 "assets", "images", "ui", "vacabolt.png")
+        if os.path.exists(vaca_path):
+            img = pygame.image.load(vaca_path).convert_alpha()
+            self.player_image = pygame.transform.scale(img, (50, 65))
+
         self.player_lane: int = 1  # 0, 1, 2
         self.player_x: int = 100
-        self.player_width: int = 40
-        self.player_height: int = 50
+        self.player_width: int = 50
+        self.player_height: int = 65
         self.lives: int = 3
         self.objects: list[Bache] = []
         self.spawn_timer: int = 0
@@ -155,15 +163,18 @@ class EsquivaCheto(BaseMinigame):
             obj.draw(self.screen)
 
         # Jugador
-        player_rect = self._get_player_rect()
-        color = (60, 140, 60)
-        if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
-            color = (255, 100, 100)
-        pygame.draw.rect(self.screen, color, player_rect)
-        # Gorra
-        pygame.draw.rect(self.screen, (180, 50, 50),
-                         (self.player_x - 3, self._get_player_y() - 6,
-                          self.player_width + 6, 8))
+        if self.player_image:
+            img = self.player_image
+            if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
+                img = img.copy()
+                img.fill((255, 100, 100, 100), special_flags=pygame.BLEND_ADD)
+            self.screen.blit(img, (self.player_x, self._get_player_y()))
+        else:
+            player_rect = self._get_player_rect()
+            color = (60, 140, 60)
+            if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
+                color = (255, 100, 100)
+            pygame.draw.rect(self.screen, color, player_rect)
 
         # UI
         self.text.render(self.screen, f"Vidas: {self.lives}",
