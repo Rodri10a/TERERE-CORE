@@ -33,7 +33,7 @@ TERERE_GREEN = (100, 180, 80)
 GRAVITY: float = 0.8
 JUMP_FORCE: float = -15.0
 PLAYER_SPEED: float = 5.0
-GROUND_Y: int = 600
+GROUND_Y: int = 680
 
 # Estados del juego
 STATE_MENU: str = "menu"

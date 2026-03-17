@@ -2,15 +2,15 @@
   "id": 1,
   "name": "Plaza de Capiata",
   "background": "plaza",
-  "bg_image": "capiata.jpg",
+  "bg_image": "capiata/stage_capiata.png",
   "bg_color": [135, 200, 235],
   "score_bonus": 300,
   "enemy_start_x": 950,
   "enemy": {
     "speed": 3,
-    "health": 100,
+    "health": 130,
     "damage": 10
   },
-  "minigame": "terere_rush",
+  "minigame": "chipa_rush",
   "platforms": []
 }
