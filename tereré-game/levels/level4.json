@@ -1,0 +1,18 @@
+{
+  "id": 4,
+  "name": "Terreno final : Asuncion",
+  "background": "ciudad",
+  "bg_image": "asuncion/stage_asuncion.png",
+  "bg_color": [60, 30, 50],
+  "score_bonus": 1000,
+  "enemy_start_x": 900,
+  "enemy": {
+    "speed": 5,
+    "health": 250,
+    "damage": 20,
+    "sprite_folder": "asuncheto",
+    "flip_sprites": true
+  },
+  "minigame": null,
+  "platforms": []
+}

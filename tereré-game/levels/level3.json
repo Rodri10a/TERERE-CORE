@@ -1,0 +1,16 @@
+{
+  "id": 3,
+  "name": "Barrio de Luque",
+  "background": "barrio",
+  "bg_image": "luque/stage_luque.jpg",
+  "bg_color": [120, 140, 100],
+  "score_bonus": 600,
+  "enemy_start_x": 900,
+  "enemy": {
+    "speed": 5,
+    "health": 180,
+    "damage": 18
+  },
+  "minigame": "machete_rush",
+  "platforms": []
+}

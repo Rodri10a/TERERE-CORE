@@ -1,0 +1,18 @@
+{
+  "id": 2,
+  "name": "Campus de la UNA",
+  "background": "calle",
+  "bg_image": "san_lorenzo/stage_san_lorenzo.jpg",
+  "bg_color": [100, 120, 150],
+  "score_bonus": 500,
+  "enemy_start_x": 950,
+  "enemy": {
+    "speed": 4,
+    "health": 150,
+    "damage": 15,
+    "sprite_folder": "sanlorenzano",
+    "flip_sprites": true
+  },
+  "minigame": "esquiva_cheto",
+  "platforms": []
+}
