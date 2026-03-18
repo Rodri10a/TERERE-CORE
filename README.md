@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="tereré-game/assets/images/backgrounds/screen.png" alt="Terere Core Banner" width="700"/>
-</p>
-
 <h1 align="center">TERERE CORE - La Venganza del Capiateño</h1>
 
 <p align="center">
@@ -11,7 +7,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/Pygame-2.6+-00979D?style=for-the-badge&logo=python&logoColor=white" alt="Pygame"/>
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"/>
+
   <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform"/>
 </p>
 
@@ -210,17 +206,21 @@ El sistema de highscores utiliza JSON como almacenamiento local:
 
 ## Creditos
 
-- **Desarrollo:** Rodrigo J. Arguello y equipo
-- **Arte:** Pixel art original con tematica paraguaya
-- **Audio:** Banda sonora original por nivel
+### Equipo de Desarrollo
+
+- **Rodrigo Arguello**
+- **Alan Rolon**
+- **Lucas Sostoa**
+- **Oscar Mereles**
+- **Esteban Gonzalez**
+- **Sophia Chena**
+- **Alexis Samudio**
+- **Ruben Jara**
+
+### Herramientas
+
 - **Motor:** [Pygame](https://www.pygame.org/)
 - **Tipografia:** [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) (SIL Open Font License)
-
----
-
-## Licencia
-
-Este proyecto esta bajo la licencia MIT. Ver el archivo `LICENSE` para mas detalles.
 
 ---
 
