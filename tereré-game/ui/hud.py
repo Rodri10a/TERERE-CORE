@@ -1,7 +1,7 @@
 """HUD (Heads-Up Display) para el modo de pelea."""
 
 import pygame
-from core.settings import SCREEN_WIDTH, WHITE, BLACK, RED, GREEN, YELLOW
+from core.settings import SCREEN_WIDTH, WHITE, RED, GREEN, YELLOW
 from ui.text_renderer import TextRenderer
 
 

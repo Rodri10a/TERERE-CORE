@@ -1,7 +1,7 @@
 """Botón clickeable para menús e interfaces."""
 
 import pygame
-from core.settings import WHITE, BLACK, FONT_UI_BOLD_PATH
+from core.settings import WHITE, FONT_UI_BOLD_PATH
 
 
 class Button:

@@ -1,6 +1,7 @@
 """Pantalla de Game Over."""
 
 import os
+import random
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_MENU, STATE_GAME,
                            WHITE, RED, YELLOW, GRAY)
@@ -71,7 +72,6 @@ class GameOverState:
         # Título con shake
         shake_x = 0
         if self.animation_timer < 30:
-            import random
             shake_x = random.randint(-3, 3)
 
         self.text.render_title_centered(self.screen, "GAME OVER", 100 + shake_x, 32, RED)

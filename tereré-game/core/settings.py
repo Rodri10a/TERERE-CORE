@@ -4,7 +4,6 @@ import os
 import pygame
 
 FONT_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "fonts", "pressstart2p.ttf")
-FONT_UI_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "fonts", "pressstart2p.ttf")
 FONT_UI_BOLD_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "fonts", "pressstart2p.ttf")
 
 # Pantalla

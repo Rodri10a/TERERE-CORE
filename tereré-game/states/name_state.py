@@ -4,7 +4,7 @@ import os
 import math
 import random
 import pygame
-from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK,
+from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE,
                            TERERE_GREEN, YELLOW, GRAY, STATE_GAME, DARK_GREEN)
 from core.input_handler import InputHandler
 from core.state_manager import StateManager

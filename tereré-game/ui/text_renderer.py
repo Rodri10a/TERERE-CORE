@@ -30,12 +30,12 @@ class TextRenderer:
         screen.blit(surface, (x, y))
 
     def render_title(self, screen: pygame.Surface, text: str, x: int, y: int,
-                     size: int = 32, color: tuple = WHITE, spacing: int = 0) -> None:
+                     size: int = 32, color: tuple = WHITE) -> None:
         surface = self._get_font(size).render(text, True, color)
         screen.blit(surface, (x, y))
 
     def render_title_centered(self, screen: pygame.Surface, text: str, y: int,
-                              size: int = 32, color: tuple = WHITE, spacing: int = 0) -> None:
+                              size: int = 32, color: tuple = WHITE) -> None:
         surface = self._get_font(size).render(text, True, color)
         x = (SCREEN_WIDTH - surface.get_width()) // 2
         screen.blit(surface, (x, y))

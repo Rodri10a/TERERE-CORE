@@ -2,7 +2,7 @@
 
 import os
 import pygame
-from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
+from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE,
                            TERERE_GREEN, STATE_NAME, YELLOW, DARK_GREEN, GRAY)
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
