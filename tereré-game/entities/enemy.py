@@ -11,44 +11,87 @@ class Enemy(Character):
     """El cheto antagonista con IA básica de estados: patrullar, perseguir, atacar, retroceder."""
 
     def __init__(self, x: float, y: float, speed: float = 3.0,
-                 health: int = 100, damage: int = 10,
-                 sprite_folder: str = "Luqueño") -> None:
+                 health: int = 130, damage: int = 10,
+                 sprite_folder: str = "Luqueño",
+                 flip_sprites: bool = False) -> None:
         super().__init__(x, y, 150, 250, color=(180, 50, 180), health=health,
                          speed=speed, damage=damage)
 
-        # Cargar sprites
+        # Cargar sprites por estado
         self.idle_frames: list[pygame.Surface] = []
         self.idle_frames_flipped: list[pygame.Surface] = []
+        self.punch_frames: list[pygame.Surface] = []
+        self.punch_frames_flipped: list[pygame.Surface] = []
+        self.hurt_frames: list[pygame.Surface] = []
+        self.hurt_frames_flipped: list[pygame.Surface] = []
+        self.rush_frames: list[pygame.Surface] = []
+        self.rush_frames_flipped: list[pygame.Surface] = []
         self.sprite: pygame.Surface | None = None
         self.sprite_flipped: pygame.Surface | None = None
         self.current_frame: int = 0
         self.anim_speed: int = 8
         self.anim_counter: int = 0
+        self.prev_anim_state: str = ""
+        self.flip_sprites: bool = flip_sprites
         self._load_sprites(sprite_folder)
 
         self.ai_state: str = "patrol"
         self.ai_timer: int = 0
         self.patrol_direction: int = 1
         self.attack_range: float = 120.0
-        self.chase_range: float = 500.0
+        self.chase_range: float = 1500.0
         self.retreat_timer: int = 0
         self.target_x: float = 0.0
         self.target_y: float = 0.0
         self.is_attacking: bool = False
         self.attack_active_frames: int = 0
+        self.damage_cooldown_max = 5
+        self.damage_cooldown = 0
 
     def _load_sprites(self, sprite_folder: str) -> None:
-        """Carga los frames idle desde la carpeta del enemigo."""
+        """Carga sprites por estado desde la carpeta del enemigo."""
+        # Buscar en characters/capiateno/folder o characters/folder
         base = os.path.join(os.path.dirname(__file__), "..",
                             "assets", "images", "characters", "capiateno", sprite_folder)
         if not os.path.isdir(base):
+            base = os.path.join(os.path.dirname(__file__), "..",
+                                "assets", "images", "characters", sprite_folder)
+        if not os.path.isdir(base):
             return
+
         files = sorted(f for f in os.listdir(base) if f.endswith(".png"))
-        for f in files:
-            img = pygame.image.load(os.path.join(base, f)).convert_alpha()
-            img = pygame.transform.scale(img, (self.width, self.height))
-            self.idle_frames.append(img)
-            self.idle_frames_flipped.append(pygame.transform.flip(img, True, False))
+
+        def _load_prefix(prefix: str) -> tuple[list, list]:
+            frames = []
+            flipped = []
+            matched = [f for f in files if f.startswith(prefix)]
+            for f in matched:
+                img = pygame.image.load(os.path.join(base, f)).convert_alpha()
+                img = pygame.transform.scale(img, (self.width, self.height))
+                frames.append(img)
+                flipped.append(pygame.transform.flip(img, True, False))
+            return frames, flipped
+
+        self.idle_frames, self.idle_frames_flipped = _load_prefix("idle")
+        self.punch_frames, self.punch_frames_flipped = _load_prefix("punch")
+        self.hurt_frames, self.hurt_frames_flipped = _load_prefix("hurt")
+        self.rush_frames, self.rush_frames_flipped = _load_prefix("rush")
+
+        # Si no hay idle pero hay otros archivos, cargar todo como idle
+        if not self.idle_frames:
+            for f in files:
+                img = pygame.image.load(os.path.join(base, f)).convert_alpha()
+                img = pygame.transform.scale(img, (self.width, self.height))
+                self.idle_frames.append(img)
+                self.idle_frames_flipped.append(pygame.transform.flip(img, True, False))
+
+        # Si flip_sprites, intercambiar normal y flipped
+        if self.flip_sprites:
+            self.idle_frames, self.idle_frames_flipped = self.idle_frames_flipped, self.idle_frames
+            self.punch_frames, self.punch_frames_flipped = self.punch_frames_flipped, self.punch_frames
+            self.hurt_frames, self.hurt_frames_flipped = self.hurt_frames_flipped, self.hurt_frames
+            self.rush_frames, self.rush_frames_flipped = self.rush_frames_flipped, self.rush_frames
+
         if self.idle_frames:
             self.sprite = self.idle_frames[0]
             self.sprite_flipped = self.idle_frames_flipped[0]
@@ -114,7 +157,6 @@ class Enemy(Character):
             self.ai_state = "patrol"
 
     def update(self) -> None:
-        """Actualiza al enemigo cada frame."""
         if self.ai_state == "patrol":
             self._do_patrol()
         elif self.ai_state == "chase":
@@ -129,18 +171,51 @@ class Enemy(Character):
         else:
             self.is_attacking = False
 
+
+        if self.damage_cooldown > 0:
+            self.damage_cooldown -= 1
+
         super().update()
+
+    def _get_current_frames(self) -> tuple[list, list]:
+        """Retorna los frames correctos segun el estado actual."""
+        if self.hurt_timer > 0 and self.hurt_frames:
+            return self.hurt_frames, self.hurt_frames_flipped
+        if self.is_attacking and self.punch_frames:
+            return self.punch_frames, self.punch_frames_flipped
+        if self.ai_state == "chase" and self.rush_frames:
+            return self.rush_frames, self.rush_frames_flipped
+        return self.idle_frames, self.idle_frames_flipped
 
     def draw(self, screen: pygame.Surface) -> None:
         """Dibuja al enemigo con sprite o fallback a rectángulo."""
         if self.idle_frames:
-            # Animación
+            # Determinar estado de animacion
+            if self.hurt_timer > 0 and self.hurt_frames:
+                anim_state = "hurt"
+            elif self.is_attacking and self.punch_frames:
+                anim_state = "punch"
+            elif self.ai_state == "chase" and self.rush_frames:
+                anim_state = "rush"
+            else:
+                anim_state = "idle"
+
+            # Resetear frame si cambio de estado
+            if anim_state != self.prev_anim_state:
+                self.current_frame = 0
+                self.anim_counter = 0
+                self.prev_anim_state = anim_state
+
+            frames, frames_flipped = self._get_current_frames()
+
+            # Animacion
             self.anim_counter += 1
             if self.anim_counter >= self.anim_speed:
                 self.anim_counter = 0
-                self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
-                self.sprite = self.idle_frames[self.current_frame]
-                self.sprite_flipped = self.idle_frames_flipped[self.current_frame]
+                self.current_frame = (self.current_frame + 1) % len(frames)
+
+            self.sprite = frames[self.current_frame % len(frames)]
+            self.sprite_flipped = frames_flipped[self.current_frame % len(frames)]
 
             # Flash blanco al recibir daño
             if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
@@ -179,9 +254,3 @@ class Enemy(Character):
             pygame.draw.arc(screen, (255, 215, 0),
                             (int(self.x + 10), chain_y, 30, 15), 3.14, 6.28, 2)
 
-        # Indicador de ataque
-        if self.is_attacking:
-            attack_rect = self.get_attack_rect()
-            s = pygame.Surface((attack_rect.width, attack_rect.height), pygame.SRCALPHA)
-            s.fill((255, 100, 100, 100))
-            screen.blit(s, (attack_rect.x, attack_rect.y))

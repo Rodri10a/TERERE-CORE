@@ -67,7 +67,7 @@ class HUD:
         # Barra de vida del enemigo (derecha)
         self._draw_health_bar(screen, SCREEN_WIDTH - 270, 8, 250, 24,
                               enemy.health, enemy.max_health,
-                              "CAPIATEÑO", align_right=True)
+                              "GUARDIA", align_right=True)
 
         # Puntaje y nivel (centro)
         self.text.render_centered(screen, f"SCORE: {score}", 10, 20, YELLOW)

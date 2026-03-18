@@ -1,5 +1,6 @@
 """Pantalla de Game Over."""
 
+import os
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_MENU, STATE_GAME,
                            WHITE, RED, YELLOW, GRAY)
@@ -21,9 +22,17 @@ class GameOverState:
         self.text = TextRenderer()
         self.final_score: int = state_manager.shared_data.get("score", 0)
 
+        # Imagen de fondo
+        self.bg_image: pygame.Surface | None = None
+        bg_path = os.path.join(os.path.dirname(__file__), "..",
+                               "assets", "images", "backgrounds", "gameover.jpg")
+        if os.path.exists(bg_path):
+            img = pygame.image.load(bg_path).convert()
+            self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
         # Guardar highscore
         self.score_system = ScoreSystem()
-        self.is_highscore = self.score_system.save_highscore("Capiateno", self.final_score)
+        self.is_highscore = self.score_system.save_highscore("Capiateño", self.final_score)
 
         btn_x = SCREEN_WIDTH // 2 - 100
         self.btn_retry = Button(btn_x, 380, 200, 50, "REINTENTAR",
@@ -40,7 +49,7 @@ class GameOverState:
             if self.btn_retry.is_clicked(mouse_pos, True):
                 self.state_manager.shared_data["score"] = 0
                 self.state_manager.shared_data["current_level"] = 1
-                self.state_manager.shared_data["player_health"] = 100
+                self.state_manager.shared_data["player_health"] = 250
                 self.state_manager.change_state(STATE_GAME)
             elif self.btn_menu.is_clicked(mouse_pos, True):
                 self.state_manager.change_state(STATE_MENU)
@@ -51,7 +60,13 @@ class GameOverState:
 
     def draw(self) -> None:
         """Dibuja la pantalla de game over."""
-        self.screen.fill((40, 15, 15))
+        if self.bg_image:
+            self.screen.blit(self.bg_image, (0, 0))
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 120))
+            self.screen.blit(overlay, (0, 0))
+        else:
+            self.screen.fill((40, 15, 15))
 
         # Título con shake
         shake_x = 0

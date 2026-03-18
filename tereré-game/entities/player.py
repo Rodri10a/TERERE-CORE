@@ -27,7 +27,7 @@ class Player(Character):
 
     def __init__(self, x: float, y: float, input_handler: InputHandler,
                  character_file: str = "capiateno") -> None:
-        super().__init__(x, y, 150, 250, color=(60, 140, 60), health=100,
+        super().__init__(x, y, 150, 250, color=(60, 140, 60), health=250,
                          speed=PLAYER_SPEED, damage=15)
         self.input_handler = input_handler
 
@@ -45,6 +45,8 @@ class Player(Character):
         self.sprite_flipped: pygame.Surface | None = None
         self.has_animation: bool = False
         self.prev_anim_state: str = ""
+        self.damage_cooldown_max = 40
+        self.damage_cooldown = 0
 
         self._load_sprites(character_file)
 
@@ -70,20 +72,13 @@ class Player(Character):
         # Intentar cargar como carpeta con frames
         frames_dir = os.path.join(base, character_file)
         if os.path.isdir(frames_dir):
-            # Buscar frames en raiz o en subcarpeta "pegar"
-            pegar_dir = os.path.join(frames_dir, "pegar")
-            if os.path.isdir(pegar_dir):
-                search_dir = pegar_dir
-            else:
-                search_dir = frames_dir
-
-            frame_files = sorted([f for f in os.listdir(search_dir)
-                                   if f.startswith("frame") and f.endswith(".png")])
-            for ff in frame_files:
-                path = os.path.join(search_dir, ff)
+            # Cargar frames de ataque: punch_*.png en la carpeta del personaje
+            punch_files = sorted([f for f in os.listdir(frames_dir)
+                                   if f.startswith("punch_") and f.endswith(".png")])
+            for pf in punch_files:
+                path = os.path.join(frames_dir, pf)
                 img = pygame.image.load(path).convert_alpha()
                 img = pygame.transform.scale(img, (self.width, self.height))
-                # Todos los frames de pegar/ son de ataque
                 self.attack_frames.append(img)
                 self.attack_frames_flipped.append(pygame.transform.flip(img, True, False))
 
@@ -153,8 +148,12 @@ class Player(Character):
             self.on_ground = False
             self.state = "jumping"
 
-        # Ataque normal (combo de 2 golpes)
-        if self.input_handler.was_just_pressed("ATTACK") and self.attack_cooldown <= 0:
+        # Ataque normal 
+        if (
+            self.input_handler.was_just_pressed("ATTACK")
+            and self.attack_cooldown <= 0
+            and not self.is_attacking
+        ):
             self.attack()
 
         # Ataque especial
@@ -166,12 +165,13 @@ class Player(Character):
         if self.punch_sound:
             self.punch_sound.play()
         self.is_attacking = True
-        self.attack_active_frames = 8
+        self.attack_active_frames = 12
+        self.attack_cooldown = ATTACK_COOLDOWN
         self.state = "attacking"
 
         if self.combo_timer > 0 and self.combo_count < 2:
             self.combo_count += 1
-            self.attack_cooldown = ATTACK_COOLDOWN // 2
+            self.attack_cooldown = ATTACK_COOLDOWN
         else:
             self.combo_count = 1
             self.attack_cooldown = ATTACK_COOLDOWN
@@ -255,6 +255,9 @@ class Player(Character):
 
         if self.special_cooldown > 0:
             self.special_cooldown -= 1
+        
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
 
         if self.attack_active_frames > 0:
             self.attack_active_frames -= 1
@@ -262,6 +265,9 @@ class Player(Character):
             self.is_attacking = False
             if self.state == "attacking":
                 self.state = "idle"
+        
+        if self.damage_cooldown > 0:
+            self.damage_cooldown -= 1
 
         if self.on_ground and self.state == "jumping":
             self.state = "idle"
@@ -290,14 +296,6 @@ class Player(Character):
         else:
             super().draw(screen)
 
-        if self.is_attacking:
-            attack_rect = self.get_attack_rect()
-            s = pygame.Surface((attack_rect.width, attack_rect.height), pygame.SRCALPHA)
-            if self.special_cooldown >= SPECIAL_COOLDOWN - 10:
-                s.fill((100, 200, 255, 120))
-            else:
-                s.fill((255, 255, 100, 100))
-            screen.blit(s, (attack_rect.x, attack_rect.y))
 
         if self.special_cooldown <= 0:
             indicator_x = int(self.x + self.width // 2)

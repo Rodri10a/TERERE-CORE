@@ -6,16 +6,20 @@ from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, STATE_GAME, STATE_MENU,
 from core.input_handler import InputHandler
 from core.state_manager import StateManager
 from minigames.terere_rush import TerereRush
+from minigames.chipa_rush import ChipaRush
 from minigames.esquiva_cheto import EsquivaCheto
 from minigames.yuyos_quiz import YuyosQuiz
+from minigames.machete_rush import MacheteRush
 from ui.text_renderer import TextRenderer
 from ui.button import Button
 
 
 MINIGAME_MAP = {
     "terere_rush": TerereRush,
+    "chipa_rush": ChipaRush,
     "esquiva_cheto": EsquivaCheto,
     "yuyos_quiz": YuyosQuiz,
+    "machete_rush": MacheteRush,
 }
 
 
@@ -35,7 +39,9 @@ class MinigameState:
 
         self.show_result: bool = False
         self.show_failed: bool = False
+        self.show_victory: bool = False
         self.result_timer: int = 180
+        self.victory_timer: int = 120  # 2 segundos
 
         # Pausa
         self.paused: bool = False
@@ -73,10 +79,13 @@ class MinigameState:
         if self.show_result:
             self.result_timer -= 1
             if self.result_timer <= 0:
-                if self.show_failed:
-                    self.state_manager.change_state(STATE_GAMEOVER)
-                else:
-                    self._advance_to_next_level()
+                self.state_manager.change_state(STATE_GAMEOVER)
+            return
+
+        if self.show_victory:
+            self.victory_timer -= 1
+            if self.victory_timer <= 0:
+                self._advance_to_next_level()
             return
 
         self.minigame.update()
@@ -85,7 +94,9 @@ class MinigameState:
             self.state_manager.shared_data["score"] += self.minigame.score_earned
             if self.minigame.failed:
                 self.show_failed = True
-            self.show_result = True
+                self.show_result = True
+            else:
+                self.show_victory = True
 
     def _setup_pause_buttons(self) -> None:
         """Crea los botones del menú de pausa."""
@@ -119,8 +130,10 @@ class MinigameState:
         self.text.render_centered(self.screen, "CONTROLES", 185, 14, TERERE_GREEN)
         instructions = {
             "terere_rush":   [("Mover canasta", "Flechas  /  A  D")],
+            "chipa_rush":    [("Mover canasta", "Flechas  /  A  D")],
             "esquiva_cheto": [("Cambiar carril", "Flechas  /  W  S")],
             "yuyos_quiz":    [("Seleccionar",    "Click izquierdo")],
+            "machete_rush":  [("Mover canasta", "Flechas  /  A  D")],
         }
         lines = instructions.get(self.minigame_id, [])
         lines.append(("Pausar", "Escape"))
@@ -135,6 +148,7 @@ class MinigameState:
         """Avanza al siguiente nivel de pelea."""
         current = self.state_manager.shared_data.get("current_level", 1)
         self.state_manager.shared_data["current_level"] = current + 1
+        self.state_manager.shared_data["player_health"] = 250
         self.state_manager.change_state(STATE_GAME)
 
     def draw(self) -> None:
@@ -160,6 +174,13 @@ class MinigameState:
                                           275, 12, TERERE_GREEN)
                 self.text.render_centered(self.screen, "Preparate para el siguiente nivel...",
                                           360, 10, (180, 180, 180))
+        elif self.show_victory:
+            self.minigame.draw()
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 150))
+            self.screen.blit(overlay, (0, 0))
+            self.text.render_title_centered(self.screen, "MINIJUEGO COMPLETADO!",
+                                            300, 26, YELLOW)
         else:
             self.minigame.draw()
 

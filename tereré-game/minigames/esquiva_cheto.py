@@ -29,7 +29,7 @@ class Bache:
     def __init__(self, lane: int) -> None:
         Bache._load_image()
         self.x: float = SCREEN_WIDTH + 10
-        self.y: float = 200 + lane * 120
+        self.y: float = 150 + lane * 170
         self.width: int = 60
         self.height: int = 50
         self.speed: float = random.uniform(5, 9)
@@ -51,18 +51,78 @@ class Bache:
             pygame.draw.rect(screen, WHITE, self.get_rect(), 1)
 
 
+class AutoRojo:
+    """Auto rojo que el jugador debe esquivar."""
+
+    _image: pygame.Surface | None = None
+    _loaded: bool = False
+
+    @classmethod
+    def _load_image(cls) -> None:
+        if cls._loaded:
+            return
+        cls._loaded = True
+        path = os.path.join(os.path.dirname(__file__), "..",
+                            "assets", "images", "ui", "auto_1.png")
+        if os.path.exists(path):
+            img = pygame.image.load(path).convert_alpha()
+            cls._image = pygame.transform.scale(img, (100, 70))
+
+    def __init__(self, lane: int) -> None:
+        AutoRojo._load_image()
+        self.x: float = SCREEN_WIDTH + 10
+        self.y: float = 150 + lane * 170
+        self.width: int = 100
+        self.height: int = 70
+        self.speed: float = random.uniform(6, 11)
+        self.active: bool = True
+
+    def update(self) -> None:
+        self.x -= self.speed
+        if self.x < -110:
+            self.active = False
+
+    def get_rect(self) -> pygame.Rect:
+        return pygame.Rect(int(self.x), int(self.y), self.width, self.height)
+
+    def draw(self, screen: pygame.Surface) -> None:
+        if AutoRojo._image:
+            screen.blit(AutoRojo._image, (int(self.x), int(self.y)))
+        else:
+            pygame.draw.rect(screen, (200, 30, 30), self.get_rect())
+            pygame.draw.rect(screen, WHITE, self.get_rect(), 1)
+
+
 class EsquivaCheto(BaseMinigame):
     """Esquiva baches moviéndote entre 3 carriles. 3 vidas."""
 
     def __init__(self, screen: pygame.Surface, input_handler: InputHandler) -> None:
         super().__init__(screen, input_handler, duration=900)  # 15 seg
         self.text = TextRenderer()
+
+        # Imagen de fondo (asfaltado)
+        self.bg_image: pygame.Surface | None = None
+        bg_path = os.path.join(os.path.dirname(__file__), "..",
+                               "assets", "images", "backgrounds",
+                               "Imagen_asfaltado_minijuego.png")
+        if os.path.exists(bg_path):
+            img = pygame.image.load(bg_path).convert()
+            self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+        # Imagen del jugador (vacabolt)
+        self.player_image: pygame.Surface | None = None
+        vaca_path = os.path.join(os.path.dirname(__file__), "..",
+                                 "assets", "images", "ui", "vacabolt.png")
+        if os.path.exists(vaca_path):
+            img = pygame.image.load(vaca_path).convert_alpha()
+            self.player_image = pygame.transform.scale(img, (120, 150))
+
         self.player_lane: int = 1  # 0, 1, 2
         self.player_x: int = 100
-        self.player_width: int = 40
-        self.player_height: int = 50
+        self.player_width: int = 120
+        self.player_height: int = 150
         self.lives: int = 3
-        self.objects: list[Bache] = []
+        self.objects: list[Bache | AutoRojo] = []
         self.spawn_timer: int = 0
         self.dodged: int = 0
         self.hurt_timer: int = 0
@@ -75,7 +135,7 @@ class EsquivaCheto(BaseMinigame):
             self.volo_sound = pygame.mixer.Sound(volo_path)
 
     def _get_player_y(self) -> int:
-        return 185 + self.player_lane * 120
+        return 140 + self.player_lane * 170
 
     def _get_player_rect(self) -> pygame.Rect:
         return pygame.Rect(self.player_x, self._get_player_y(),
@@ -114,7 +174,10 @@ class EsquivaCheto(BaseMinigame):
         spawn_rate = max(20, 50 - self.timer // 100)
         if self.spawn_timer >= spawn_rate:
             lane = random.randint(0, 2)
-            self.objects.append(Bache(lane))
+            if random.random() < 0.4:
+                self.objects.append(AutoRojo(lane))
+            else:
+                self.objects.append(Bache(lane))
             self.spawn_timer = 0
 
         # Actualizar baches
@@ -133,32 +196,30 @@ class EsquivaCheto(BaseMinigame):
         self.objects = [o for o in self.objects if o.active]
 
     def draw(self) -> None:
-        self.screen.fill((50, 40, 60))
+        if self.bg_image:
+            self.screen.blit(self.bg_image, (0, 0))
+        else:
+            self.screen.fill((50, 40, 60))
 
         self.text.render_title_centered(self.screen, "ESQUIVA LOS BACHES", 15, 18, YELLOW)
-
-        # Carriles
-        for i in range(3):
-            lane_y = 180 + i * 120
-            pygame.draw.rect(self.screen, (60, 50, 70),
-                             (0, lane_y, SCREEN_WIDTH, 60))
-            pygame.draw.line(self.screen, (80, 70, 90),
-                             (0, lane_y), (SCREEN_WIDTH, lane_y), 1)
 
         # Baches
         for obj in self.objects:
             obj.draw(self.screen)
 
         # Jugador
-        player_rect = self._get_player_rect()
-        color = (60, 140, 60)
-        if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
-            color = (255, 100, 100)
-        pygame.draw.rect(self.screen, color, player_rect)
-        # Gorra
-        pygame.draw.rect(self.screen, (180, 50, 50),
-                         (self.player_x - 3, self._get_player_y() - 6,
-                          self.player_width + 6, 8))
+        if self.player_image:
+            img = self.player_image
+            if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
+                img = img.copy()
+                img.fill((255, 100, 100, 100), special_flags=pygame.BLEND_ADD)
+            self.screen.blit(img, (self.player_x, self._get_player_y()))
+        else:
+            player_rect = self._get_player_rect()
+            color = (60, 140, 60)
+            if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
+                color = (255, 100, 100)
+            pygame.draw.rect(self.screen, color, player_rect)
 
         # UI
         self.text.render(self.screen, f"Vidas: {self.lives}",

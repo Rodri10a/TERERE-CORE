@@ -1,5 +1,6 @@
 """Pantalla de historia del juego."""
 
+import os
 import pygame
 from core.settings import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK,
                            TERERE_GREEN, YELLOW, GRAY, STATE_GAME, DARK_GREEN)
@@ -20,6 +21,15 @@ class StoryState:
         self.timer: int = 0
         self.player_name: str = state_manager.shared_data.get("player_name", "Jugador")
 
+        # Fondo
+        try:
+            bg_path = os.path.join(os.path.dirname(__file__), "..",
+                                   "assets", "images", "backgrounds", "fondo_historia.png")
+            bg = pygame.image.load(bg_path).convert()
+            self.background = pygame.transform.scale(bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        except Exception:
+            self.background = None
+
     def handle_events(self, event: pygame.event.Event) -> None:
         """Avanza con ENTER o click."""
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -35,23 +45,32 @@ class StoryState:
 
     def draw(self) -> None:
         """Dibuja la pantalla de historia."""
-        self.screen.fill((15, 30, 15))
+        if self.background:
+            self.screen.blit(self.background, (0, 0))
+            # Overlay oscuro para legibilidad del texto
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 140))
+            self.screen.blit(overlay, (0, 0))
+        else:
+            self.screen.fill((15, 30, 15))
 
         # Titulo
         self.text.render_title_centered(self.screen, "TERERE CORE",
+                                        62, 32, (80, 40, 0))
+        self.text.render_title_centered(self.screen, "TERERE CORE",
                                         60, 32, YELLOW)
-        self.text.render_centered(self.screen, "La venganza del capiateno",
-                                  110, 12, TERERE_GREEN)
+        self.text.render_centered(self.screen, "La venganza del capiateño",
+                                  110, 12, (255, 200, 80))
 
         # Linea decorativa
         line_y = 160
-        pygame.draw.line(self.screen, TERERE_GREEN,
+        pygame.draw.line(self.screen, (200, 150, 50),
                          (SCREEN_WIDTH // 2 - 200, line_y),
                          (SCREEN_WIDTH // 2 + 200, line_y), 2)
 
         # Historia con aparicion gradual
         story = [
-            f"{self.player_name} es un capiateno que estaba",
+            f"{self.player_name} es un capiateño que estaba",
             "tranquilamente tomando terere con sus amigos",
             "en la plaza de Capiata...",
             "",
@@ -71,7 +90,7 @@ class StoryState:
             if self.timer > i * 15:
                 line = line.replace("{name}", self.player_name)
                 if line:
-                    color = (200, 220, 200) if line[0] != " " else GRAY
+                    color = (255, 240, 180) if line[0] != " " else (200, 180, 120)
                     self.text.render_centered(self.screen, line, y, 10, color)
             y += 20
 
@@ -80,4 +99,4 @@ class StoryState:
             flash = (self.timer // 30) % 2 == 0
             if flash:
                 self.text.render_centered(self.screen, "Presiona ENTER para comenzar la aventura",
-                                          610, 10, TERERE_GREEN)
+                                          610, 10, (255, 220, 80))
