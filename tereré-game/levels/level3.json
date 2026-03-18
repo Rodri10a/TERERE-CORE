@@ -11,11 +11,8 @@
     "health": 180,
     "damage": 18
   },
-<<<<<<< HEAD
-  "music":"stage_luque.mp3",
+  "music":"Hamaca paraguaya peela Asun WAV.wav",
   "minigame": "terere_rush",
-=======
   "minigame": "machete_rush",
->>>>>>> 2d5d03a8a1b9e995139a8e691d834c08364f98de
   "platforms": []
 }
