@@ -59,7 +59,7 @@ class StoryState:
                                         62, 32, (80, 40, 0))
         self.text.render_title_centered(self.screen, "TERERE CORE",
                                         60, 32, YELLOW)
-        self.text.render_centered(self.screen, "La venganza del capiateno",
+        self.text.render_centered(self.screen, "La venganza del capiateño",
                                   110, 12, (255, 200, 80))
 
         # Linea decorativa
@@ -70,7 +70,7 @@ class StoryState:
 
         # Historia con aparicion gradual
         story = [
-            f"{self.player_name} es un capiateno que estaba",
+            f"{self.player_name} es un capiateño que estaba",
             "tranquilamente tomando terere con sus amigos",
             "en la plaza de Capiata...",
             "",

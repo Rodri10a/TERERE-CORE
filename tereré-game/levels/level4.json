@@ -7,9 +7,11 @@
   "score_bonus": 1000,
   "enemy_start_x": 900,
   "enemy": {
-    "speed": 6,
+    "speed": 5,
     "health": 250,
-    "damage": 25
+    "damage": 20,
+    "sprite_folder": "asuncheto",
+    "flip_sprites": true
   },
   "minigame": null,
   "platforms": []

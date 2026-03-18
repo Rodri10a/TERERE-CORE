@@ -1,4 +1,4 @@
-"""Minijuego: Machete Rush - Un avion narco pasa y tira machetes, recolecta 15 para pasar."""
+"""Minijuego: Machete Rush - Esquiva los machetes que caen del avion narco. 3 vidas, 20 segundos."""
 
 import os
 import pygame
@@ -23,15 +23,14 @@ class FallingMachete:
             img = pygame.image.load(path).convert_alpha()
             cls._image = pygame.transform.scale(img, (35, 45))
 
-    def __init__(self, x: float, y: float, min_speed: float = 2.5) -> None:
+    def __init__(self, x: float, y: float, min_speed: float = 3.0) -> None:
         FallingMachete._load_image()
         self.x: float = x + random.randint(-20, 20)
         self.y: float = y
         self.width: int = 35
         self.height: int = 45
-        self.speed: float = random.uniform(min_speed, min_speed + 2.0)
+        self.speed: float = random.uniform(min_speed, min_speed + 2.5)
         self.active: bool = True
-        self.caught: bool = False
 
     def update(self) -> None:
         self.y += self.speed
@@ -49,8 +48,7 @@ class FallingMachete:
                              (int(self.x), int(self.y), self.width, self.height))
 
 
-MACHETES_NEEDED = 15
-MACHETES_PER_DROP = 5
+MACHETES_PER_DROP = 4
 
 
 class NarcoPlane:
@@ -104,10 +102,10 @@ class NarcoPlane:
 
 
 class MacheteRush(BaseMinigame):
-    """Un avion narco pasa y tira machetes. Recolecta 15 para pasar!"""
+    """Esquiva los machetes que tira el avion narco. 3 vidas, 20 segundos."""
 
     def __init__(self, screen: pygame.Surface, input_handler: InputHandler) -> None:
-        super().__init__(screen, input_handler, duration=2400)  # 40 seg
+        super().__init__(screen, input_handler, duration=1200)  # 20 seg
         from ui.text_renderer import TextRenderer
         self.text = TextRenderer()
 
@@ -119,27 +117,28 @@ class MacheteRush(BaseMinigame):
             img = pygame.image.load(bg_path).convert()
             self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        # Limites de movimiento (zona del camino)
+        # Limites de movimiento
         self.move_left_limit: int = int(SCREEN_WIDTH * 0.18)
         self.move_right_limit: int = int(SCREEN_WIDTH * 0.82)
 
         # Personaje (vacabolt_2)
-        self.basket_image: pygame.Surface | None = None
+        self.player_image: pygame.Surface | None = None
         vaca_path = os.path.join(os.path.dirname(__file__), "..",
                                  "assets", "images", "ui", "vacabolt_2.png")
         if os.path.exists(vaca_path):
             img = pygame.image.load(vaca_path).convert_alpha()
-            self.basket_image = pygame.transform.scale(img, (70, 80))
+            self.player_image = pygame.transform.scale(img, (110, 130))
 
-        self.basket_x: float = SCREEN_WIDTH // 2 - 35
-        self.basket_y: int = SCREEN_HEIGHT - 100
-        self.basket_width: int = 70
-        self.basket_height: int = 80
-        self.basket_speed: float = 7.0
+        self.player_x: float = SCREEN_WIDTH // 2 - 55
+        self.player_y: int = SCREEN_HEIGHT - 150
+        self.player_width: int = 110
+        self.player_height: int = 130
+        self.player_speed: float = 7.0
 
         self.machetes: list[FallingMachete] = []
-        self.caught: int = 0
-        self.missed: int = 0
+        self.lives: int = 3
+        self.dodged: int = 0
+        self.hurt_timer: int = 0
 
         # Avion narco
         self.plane_image: pygame.Surface | None = None
@@ -150,17 +149,13 @@ class MacheteRush(BaseMinigame):
             self.plane_image = pygame.transform.scale(img, (120, 60))
 
         self.planes: list[NarcoPlane] = []
-        self.plane_spawn_timer: int = 240  # empieza al maximo para que salga el primer avion ya
-        self.plane_spawn_interval: int = 240  # cada 4 seg
+        self.plane_spawn_timer: int = 240  # primer avion inmediato
+        self.plane_spawn_interval: int = 180  # cada 3 seg
         self.next_direction: int = 1
 
         # Intro de 2 segundos
         self.intro_timer: int = 120
         self.showing_intro: bool = True
-
-        # Pantalla de victoria
-        self.victory_timer: int = 0
-        self.showing_victory: bool = False
 
     def handle_events(self, event: pygame.event.Event) -> None:
         pass
@@ -176,36 +171,31 @@ class MacheteRush(BaseMinigame):
                 self.showing_intro = False
             return
 
-        # Pantalla de victoria antes de completar
-        if self.showing_victory:
-            self.victory_timer -= 1
-            if self.victory_timer <= 0:
-                self.completed = True
-                self.score_earned = self.caught * 60
-            return
+        if self.hurt_timer > 0:
+            self.hurt_timer -= 1
 
         self.timer -= 1
 
-        # Victoria
-        if self.caught >= MACHETES_NEEDED:
-            self.showing_victory = True
-            self.victory_timer = 180
-            return
-
-        # Tiempo agotado
-        if self.timer <= 0:
+        # Perdes si te quedas sin vidas
+        if self.lives <= 0:
             self.completed = True
             self.failed = True
-            self.score_earned = self.caught * 30
+            self.score_earned = 0
             return
 
-        # Mover canasta (solo en la zona del camino)
+        # Sobreviviste 20 segundos = victoria
+        if self.timer <= 0:
+            self.completed = True
+            self.score_earned = self.dodged * 30 + self.lives * 100
+            return
+
+        # Mover personaje
         if self.input_handler.is_pressed("MOVE_LEFT"):
-            self.basket_x -= self.basket_speed
+            self.player_x -= self.player_speed
         if self.input_handler.is_pressed("MOVE_RIGHT"):
-            self.basket_x += self.basket_speed
-        self.basket_x = max(self.move_left_limit,
-                            min(self.move_right_limit - self.basket_width, self.basket_x))
+            self.player_x += self.player_speed
+        self.player_x = max(self.move_left_limit,
+                            min(self.move_right_limit - self.player_width, self.player_x))
 
         # Spawn aviones
         self.plane_spawn_timer += 1
@@ -227,19 +217,20 @@ class MacheteRush(BaseMinigame):
 
         self.planes = [p for p in self.planes if p.active]
 
-        # Actualizar machetes
-        basket_rect = pygame.Rect(int(self.basket_x), self.basket_y,
-                                  self.basket_width, self.basket_height)
+        # Colision machetes con jugador
+        player_rect = pygame.Rect(int(self.player_x + 20), int(self.player_y + 20),
+                                  self.player_width - 40, self.player_height - 30)
         for m in self.machetes:
             m.update()
-            if m.active and m.get_rect().colliderect(basket_rect):
+            if m.active and m.get_rect().colliderect(player_rect) and self.hurt_timer <= 0:
                 m.active = False
-                m.caught = True
-                self.caught += 1
+                self.lives -= 1
+                self.hurt_timer = 40
 
+        # Contar machetes esquivados (cayeron sin tocar)
         for m in self.machetes:
-            if not m.active and not m.caught:
-                self.missed += 1
+            if not m.active and m.y > SCREEN_HEIGHT - 10:
+                self.dodged += 1
 
         self.machetes = [m for m in self.machetes if m.active]
 
@@ -257,28 +248,14 @@ class MacheteRush(BaseMinigame):
             self.screen.blit(overlay, (0, 0))
             self.text.render_title_centered(self.screen, "MACHETE RUSH", 160, 28, YELLOW)
             self.text.render_centered(self.screen,
-                                      f"Recolecta {MACHETES_NEEDED} machetes para pasar!",
+                                      "Esquiva los machetes del avion narco!",
                                       240, 14, WHITE)
             self.text.render_centered(self.screen,
-                                      "El avion narco tira machetes desde el cielo",
+                                      "Tenes 3 vidas, sobrevivi 20 segundos!",
                                       290, 10, (180, 180, 150))
             self.text.render_centered(self.screen,
-                                      "Usa las flechas para mover la canasta",
+                                      "A y D para moverse",
                                       330, 10, (180, 180, 150))
-            return
-
-        # Pantalla de victoria
-        if self.showing_victory:
-            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-            overlay.fill((0, 0, 0, 180))
-            self.screen.blit(overlay, (0, 0))
-            self.text.render_title_centered(self.screen, "MINIJUEGO COMPLETO!", 200, 26, YELLOW)
-            self.text.render_centered(self.screen,
-                                      f"Recolectaste {self.caught} machetes!",
-                                      270, 14, TERERE_GREEN)
-            self.text.render_centered(self.screen,
-                                      "Preparate para el siguiente nivel...",
-                                      330, 10, (180, 180, 180))
             return
 
         # Aviones
@@ -290,29 +267,34 @@ class MacheteRush(BaseMinigame):
             m.draw(self.screen)
 
         # Personaje
-        if self.basket_image:
-            self.screen.blit(self.basket_image, (int(self.basket_x), self.basket_y))
+        if self.player_image:
+            img = self.player_image
+            if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
+                img = img.copy()
+                img.fill((255, 100, 100, 100), special_flags=pygame.BLEND_ADD)
+            self.screen.blit(img, (int(self.player_x), self.player_y))
         else:
-            basket_rect = pygame.Rect(int(self.basket_x), self.basket_y,
-                                      self.basket_width, self.basket_height)
-            pygame.draw.rect(self.screen, (180, 130, 60), basket_rect)
-            pygame.draw.rect(self.screen, (140, 100, 40), basket_rect, 3)
+            color = (60, 140, 60)
+            if self.hurt_timer > 0 and self.hurt_timer % 4 < 2:
+                color = (255, 100, 100)
+            pygame.draw.rect(self.screen, color,
+                             (int(self.player_x), self.player_y,
+                              self.player_width, self.player_height))
 
         # HUD
         self.text.render_title_centered(self.screen, "MACHETE RUSH", 15, 20, YELLOW)
-        self.text.render(self.screen, f"Machetes: {self.caught}/{MACHETES_NEEDED}",
-                         20, 65, 10, WHITE)
-        self.text.render(self.screen, f"Perdidos: {self.missed}", 20, 80, 10, RED)
+        self.text.render(self.screen, f"Vidas: {self.lives}", 20, 65, 10, RED)
         self.text.render(self.screen, f"Tiempo: {self.get_time_remaining():.0f}s",
                          SCREEN_WIDTH - 160, 65, 10, WHITE)
 
-        # Barra de progreso
-        bar_x, bar_y, bar_w, bar_h = SCREEN_WIDTH // 2 - 100, 70, 200, 12
-        pygame.draw.rect(self.screen, (80, 60, 30), (bar_x, bar_y, bar_w, bar_h))
-        fill_w = int(bar_w * min(self.caught / MACHETES_NEEDED, 1.0))
-        pygame.draw.rect(self.screen, TERERE_GREEN, (bar_x, bar_y, fill_w, bar_h))
-        pygame.draw.rect(self.screen, (120, 90, 40), (bar_x, bar_y, bar_w, bar_h), 2)
+        # Corazones de vida
+        for i in range(self.lives):
+            hx = 120 + i * 30
+            pygame.draw.polygon(self.screen, RED,
+                                [(hx, 72), (hx - 8, 64), (hx - 8, 58),
+                                 (hx - 4, 54), (hx, 58), (hx + 4, 54),
+                                 (hx + 8, 58), (hx + 8, 64)])
 
         # Instrucciones
-        self.text.render_centered(self.screen, "Flechas y WASD para mover la canasta",
+        self.text.render_centered(self.screen, "A y D para moverse",
                                   SCREEN_HEIGHT - 25, 10, (150, 150, 120))

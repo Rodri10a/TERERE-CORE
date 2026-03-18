@@ -33,7 +33,7 @@ class VictoryState:
 
         # Guardar highscore
         self.score_system = ScoreSystem()
-        self.score_system.save_highscore("Capiateno", self.final_score)
+        self.score_system.save_highscore("Capiateño", self.final_score)
 
         # Calcular estrellas (1-3 según puntaje)
         if self.final_score >= 5000:
@@ -44,7 +44,7 @@ class VictoryState:
             self.stars = 1
 
         btn_x = SCREEN_WIDTH // 2 - 100
-        self.btn_menu = Button(btn_x, 450, 200, 50, "MENU PRINCIPAL",
+        self.btn_menu = Button(btn_x, 570, 200, 50, "MENU PRINCIPAL",
                                bg_color=TERERE_GREEN, hover_color=(130, 210, 110))
 
         self.animation_timer: int = 0
@@ -79,14 +79,8 @@ class VictoryState:
             colors = [(255, 215, 0), (100, 200, 100), (100, 180, 255)]
             pygame.draw.circle(self.screen, colors[i % 3], (px, py), 4)
 
-        self.text.render_title_centered(self.screen, "VICTORIA", 80, 32, YELLOW)
-        self.text.render_centered(self.screen, "Recuperaste el terere",
-                                  140, 14, TERERE_GREEN)
-        self.text.render_centered(self.screen, "El capiateno triunfa sobre el cheto",
-                                  170, 12, WHITE)
-
         # Estrellas
-        star_y = 280
+        star_y = 380
         star_spacing = 60
         start_x = SCREEN_WIDTH // 2 - (self.stars * star_spacing) // 2
         for i in range(self.stars):
@@ -94,10 +88,7 @@ class VictoryState:
             self._draw_star(x, star_y, 20, YELLOW)
 
         self.text.render_centered(self.screen, f"Puntaje final: {self.final_score}",
-                                  330, 16, WHITE)
-
-        rank = "MAESTRO TERERE" if self.stars >= 3 else "CAPIATENO PRO" if self.stars >= 2 else "NOVATO"
-        self.text.render_centered(self.screen, f"Rango: {rank}", 370, 12, YELLOW)
+                                  520, 16, WHITE)
 
         mouse_pos = pygame.mouse.get_pos()
         self.btn_menu.draw(self.screen, mouse_pos)

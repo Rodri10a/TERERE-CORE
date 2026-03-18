@@ -29,7 +29,7 @@ class Bache:
     def __init__(self, lane: int) -> None:
         Bache._load_image()
         self.x: float = SCREEN_WIDTH + 10
-        self.y: float = 200 + lane * 120
+        self.y: float = 150 + lane * 170
         self.width: int = 60
         self.height: int = 50
         self.speed: float = random.uniform(5, 9)
@@ -48,6 +48,48 @@ class Bache:
             screen.blit(Bache._image, (int(self.x), int(self.y)))
         else:
             pygame.draw.rect(screen, (80, 50, 20), self.get_rect())
+            pygame.draw.rect(screen, WHITE, self.get_rect(), 1)
+
+
+class AutoRojo:
+    """Auto rojo que el jugador debe esquivar."""
+
+    _image: pygame.Surface | None = None
+    _loaded: bool = False
+
+    @classmethod
+    def _load_image(cls) -> None:
+        if cls._loaded:
+            return
+        cls._loaded = True
+        path = os.path.join(os.path.dirname(__file__), "..",
+                            "assets", "images", "ui", "auto_1.png")
+        if os.path.exists(path):
+            img = pygame.image.load(path).convert_alpha()
+            cls._image = pygame.transform.scale(img, (100, 70))
+
+    def __init__(self, lane: int) -> None:
+        AutoRojo._load_image()
+        self.x: float = SCREEN_WIDTH + 10
+        self.y: float = 150 + lane * 170
+        self.width: int = 100
+        self.height: int = 70
+        self.speed: float = random.uniform(6, 11)
+        self.active: bool = True
+
+    def update(self) -> None:
+        self.x -= self.speed
+        if self.x < -110:
+            self.active = False
+
+    def get_rect(self) -> pygame.Rect:
+        return pygame.Rect(int(self.x), int(self.y), self.width, self.height)
+
+    def draw(self, screen: pygame.Surface) -> None:
+        if AutoRojo._image:
+            screen.blit(AutoRojo._image, (int(self.x), int(self.y)))
+        else:
+            pygame.draw.rect(screen, (200, 30, 30), self.get_rect())
             pygame.draw.rect(screen, WHITE, self.get_rect(), 1)
 
 
@@ -73,14 +115,14 @@ class EsquivaCheto(BaseMinigame):
                                  "assets", "images", "ui", "vacabolt.png")
         if os.path.exists(vaca_path):
             img = pygame.image.load(vaca_path).convert_alpha()
-            self.player_image = pygame.transform.scale(img, (50, 65))
+            self.player_image = pygame.transform.scale(img, (120, 150))
 
         self.player_lane: int = 1  # 0, 1, 2
         self.player_x: int = 100
-        self.player_width: int = 50
-        self.player_height: int = 65
+        self.player_width: int = 120
+        self.player_height: int = 150
         self.lives: int = 3
-        self.objects: list[Bache] = []
+        self.objects: list[Bache | AutoRojo] = []
         self.spawn_timer: int = 0
         self.dodged: int = 0
         self.hurt_timer: int = 0
@@ -93,7 +135,7 @@ class EsquivaCheto(BaseMinigame):
             self.volo_sound = pygame.mixer.Sound(volo_path)
 
     def _get_player_y(self) -> int:
-        return 185 + self.player_lane * 120
+        return 140 + self.player_lane * 170
 
     def _get_player_rect(self) -> pygame.Rect:
         return pygame.Rect(self.player_x, self._get_player_y(),
@@ -132,7 +174,10 @@ class EsquivaCheto(BaseMinigame):
         spawn_rate = max(20, 50 - self.timer // 100)
         if self.spawn_timer >= spawn_rate:
             lane = random.randint(0, 2)
-            self.objects.append(Bache(lane))
+            if random.random() < 0.4:
+                self.objects.append(AutoRojo(lane))
+            else:
+                self.objects.append(Bache(lane))
             self.spawn_timer = 0
 
         # Actualizar baches

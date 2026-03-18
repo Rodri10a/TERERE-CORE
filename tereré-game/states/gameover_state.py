@@ -32,7 +32,7 @@ class GameOverState:
 
         # Guardar highscore
         self.score_system = ScoreSystem()
-        self.is_highscore = self.score_system.save_highscore("Capiateno", self.final_score)
+        self.is_highscore = self.score_system.save_highscore("Capiateño", self.final_score)
 
         btn_x = SCREEN_WIDTH // 2 - 100
         self.btn_retry = Button(btn_x, 380, 200, 50, "REINTENTAR",

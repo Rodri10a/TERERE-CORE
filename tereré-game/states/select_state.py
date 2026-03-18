@@ -11,10 +11,10 @@ from ui.text_renderer import TextRenderer
 
 CHARACTERS = [
     {
-        "name": "Capiateno",
+        "name": "Capiateño",
         "file": "capiateno",
         "preview": "capiateno/frame1.png",
-        "description": "El capiateno clasico animado",
+        "description": "El capiateño clasico animado",
     },
     {
         "name": "Karateka",

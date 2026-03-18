@@ -135,12 +135,12 @@ class ChipaRush(BaseMinigame):
                                  "assets", "images", "ui", "vacabolt_2.png")
         if os.path.exists(vaca_path):
             img = pygame.image.load(vaca_path).convert_alpha()
-            self.basket_image = pygame.transform.scale(img, (70, 80))
+            self.basket_image = pygame.transform.scale(img, (110, 130))
 
-        self.basket_x: float = SCREEN_WIDTH // 2 - 35
-        self.basket_y: int = SCREEN_HEIGHT - 100
-        self.basket_width: int = 70
-        self.basket_height: int = 80
+        self.basket_x: float = SCREEN_WIDTH // 2 - 55
+        self.basket_y: int = SCREEN_HEIGHT - 150
+        self.basket_width: int = 110
+        self.basket_height: int = 130
         self.basket_speed: float = 7.0
 
         self.chipas: list[FallingChipa] = []
@@ -163,7 +163,7 @@ class ChipaRush(BaseMinigame):
         # Audio chipa barrero
         self.chipa_sound: pygame.mixer.Sound | None = None
         sound_path = os.path.join(os.path.dirname(__file__), "..",
-                                  "assets", "sounds", "music", "Chipa_Barreeero.wav")
+                                  "assets", "sounds", "music", "chipa_barrero.mp3")
         if os.path.exists(sound_path):
             self.chipa_sound = pygame.mixer.Sound(sound_path)
             self.chipa_sound.set_volume(0.6)
@@ -191,22 +191,14 @@ class ChipaRush(BaseMinigame):
                 self.showing_intro = False
             return
 
-        # Pantalla de victoria antes de completar
-        if self.showing_victory:
-            self.victory_timer -= 1
-            if self.victory_timer <= 0:
-                self.completed = True
-                self.score_earned = self.caught * 60
-                if self.chipa_sound:
-                    self.chipa_sound.stop()
-            return
-
         self.timer -= 1
 
         # Victoria
         if self.caught >= CHIPAS_NEEDED:
-            self.showing_victory = True
-            self.victory_timer = 180  # 3 seg mostrando mensaje
+            self.completed = True
+            self.score_earned = self.caught * 60
+            if self.chipa_sound:
+                self.chipa_sound.stop()
             return
 
         # Tiempo agotado
@@ -333,5 +325,5 @@ class ChipaRush(BaseMinigame):
         pygame.draw.rect(self.screen, (120, 90, 40), (bar_x, bar_y, bar_w, bar_h), 2)
 
         # Instrucciones
-        self.text.render_centered(self.screen, "Flechas y WASD para mover la canasta",
+        self.text.render_centered(self.screen, "A y D para moverse",
                                   SCREEN_HEIGHT - 25, 10, (150, 150, 120))

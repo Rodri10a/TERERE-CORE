@@ -24,7 +24,7 @@ class MenuState:
         # Imagen de fondo
         self.bg_image: pygame.Surface | None = None
         bg_path = os.path.join(os.path.dirname(__file__), "..",
-                               "assets", "images", "backgrounds", "antesjuego.png")
+                               "assets", "images", "backgrounds", "screen.png")
         if os.path.exists(bg_path):
             img = pygame.image.load(bg_path).convert()
             self.bg_image = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -40,13 +40,17 @@ class MenuState:
         # Guardar referencia en shared_data para que otros estados puedan pararla
         state_manager.shared_data["portada_music"] = self.portada_music
 
-        # Botones
-        btn_x = SCREEN_WIDTH // 2 - 100
-        self.btn_play = Button(btn_x, 360, 200, 50, "JUGAR",
-                               bg_color=TERERE_GREEN, hover_color=(130, 210, 110))
-        self.btn_scores = Button(btn_x, 425, 200, 50, "HIGHSCORES",
+        # Botones en horizontal abajo (HIGHSCORES - JUGAR - SALIR)
+        btn_w = 180
+        btn_h = 45
+        btn_y = 660
+        gap = 20
+        center_x = SCREEN_WIDTH // 2 - btn_w // 2
+        self.btn_scores = Button(center_x - btn_w - gap, btn_y, btn_w, btn_h, "HIGHSCORES",
                                  bg_color=(80, 130, 180), hover_color=(110, 160, 210))
-        self.btn_quit = Button(btn_x, 490, 200, 50, "SALIR",
+        self.btn_play = Button(center_x, btn_y, btn_w, btn_h, "JUGAR",
+                               bg_color=TERERE_GREEN, hover_color=(130, 210, 110))
+        self.btn_quit = Button(center_x + btn_w + gap, btn_y, btn_w, btn_h, "SALIR",
                                bg_color=(180, 60, 60), hover_color=(210, 90, 90))
 
         self.show_scores: bool = False
@@ -102,7 +106,7 @@ class MenuState:
         self.text.render_title_centered(self.screen, "TERERE CORE", 80, 32, YELLOW)
 
         # Subtítulo
-        self.text.render_centered(self.screen, "La venganza del capiateno",
+        self.text.render_centered(self.screen, "La venganza del capiateño",
                                   130, 14, (255, 200, 100))
 
         # Botones

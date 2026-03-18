@@ -296,14 +296,6 @@ class Player(Character):
         else:
             super().draw(screen)
 
-        if self.is_attacking:
-            attack_rect = self.get_attack_rect()
-            s = pygame.Surface((attack_rect.width, attack_rect.height), pygame.SRCALPHA)
-            if self.special_cooldown >= SPECIAL_COOLDOWN - 10:
-                s.fill((100, 200, 255, 120))
-            else:
-                s.fill((255, 255, 100, 100))
-            screen.blit(s, (attack_rect.x, attack_rect.y))
 
         if self.special_cooldown <= 0:
             indicator_x = int(self.x + self.width // 2)

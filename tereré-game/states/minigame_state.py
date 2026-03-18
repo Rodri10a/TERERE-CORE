@@ -39,7 +39,9 @@ class MinigameState:
 
         self.show_result: bool = False
         self.show_failed: bool = False
+        self.show_victory: bool = False
         self.result_timer: int = 180
+        self.victory_timer: int = 120  # 2 segundos
 
         # Pausa
         self.paused: bool = False
@@ -75,11 +77,14 @@ class MinigameState:
             return
 
         if self.show_result:
-            if self.show_failed:
-                self.result_timer -= 1
-                if self.result_timer <= 0:
-                    self.state_manager.change_state(STATE_GAMEOVER)
-            else:
+            self.result_timer -= 1
+            if self.result_timer <= 0:
+                self.state_manager.change_state(STATE_GAMEOVER)
+            return
+
+        if self.show_victory:
+            self.victory_timer -= 1
+            if self.victory_timer <= 0:
                 self._advance_to_next_level()
             return
 
@@ -89,7 +94,9 @@ class MinigameState:
             self.state_manager.shared_data["score"] += self.minigame.score_earned
             if self.minigame.failed:
                 self.show_failed = True
-            self.show_result = True
+                self.show_result = True
+            else:
+                self.show_victory = True
 
     def _setup_pause_buttons(self) -> None:
         """Crea los botones del menú de pausa."""
@@ -141,6 +148,7 @@ class MinigameState:
         """Avanza al siguiente nivel de pelea."""
         current = self.state_manager.shared_data.get("current_level", 1)
         self.state_manager.shared_data["current_level"] = current + 1
+        self.state_manager.shared_data["player_health"] = 250
         self.state_manager.change_state(STATE_GAME)
 
     def draw(self) -> None:
@@ -166,6 +174,13 @@ class MinigameState:
                                           275, 12, TERERE_GREEN)
                 self.text.render_centered(self.screen, "Preparate para el siguiente nivel...",
                                           360, 10, (180, 180, 180))
+        elif self.show_victory:
+            self.minigame.draw()
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 150))
+            self.screen.blit(overlay, (0, 0))
+            self.text.render_title_centered(self.screen, "MINIJUEGO COMPLETADO!",
+                                            300, 26, YELLOW)
         else:
             self.minigame.draw()
 
