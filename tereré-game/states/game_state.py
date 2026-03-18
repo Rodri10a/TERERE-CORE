@@ -57,9 +57,9 @@ class GameState:
         self.fight_music_playing: bool = False
         self.level_music = {
             1: "areko4kuña.wav",
-            2: "peleasanlo.wav",
+            2: "pelea_Sanlo.wav",
             3: "luque.pelea.wav",
-            4: "../effects/masivo.asuncion.wav",
+            4: "pelea_ASUN.wav",
         }
 
         # Parar música de portada al entrar a la pelea
